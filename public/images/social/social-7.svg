@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#F5EBE0"/>
+  <!-- Gift set box unboxing aesthetic -->
+  <!-- Box base -->
+  <rect x="70" y="190" width="260" height="160" rx="4" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.5"/>
+  <!-- Box lid open (angled) -->
+  <rect x="70" y="100" width="260" height="100" rx="4" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.5" transform="rotate(-8 200 150)"/>
+  <!-- Tissue paper peek -->
+  <path d="M85,190 Q150,175 200,185 Q250,195 315,178" fill="none" stroke="#D9A679" stroke-width="3" opacity="0.6"/>
+  <path d="M85,195 Q150,183 200,192 Q250,202 315,186" fill="none" stroke="#FAF6F0" stroke-width="2" opacity="0.8"/>
+  <!-- Products inside box -->
+  <rect x="105" y="215" width="55" height="110" rx="27" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.2"/>
+  <rect x="172" y="205" width="55" height="120" rx="27" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.2"/>
+  <rect x="240" y="218" width="55" height="108" rx="27" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.2"/>
+  <!-- Ribbon on box -->
+  <line x1="200" y1="100" x2="200" y2="350" stroke="#B8804A" stroke-width="2.5" opacity="0.35" transform="rotate(-8 200 200)"/>
+  <!-- Bow at top -->
+  <path d="M200,105 C185,88 175,100 200,105 Z" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.2" transform="rotate(-8 200 200)"/>
+  <path d="M200,105 C215,88 225,100 200,105 Z" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.2" transform="rotate(-8 200 200)"/>
+  <text x="200" y="376" font-family="serif" font-size="11" fill="#2B2119" opacity="0.35" text-anchor="middle" letter-spacing="3">RITUAL GIFT SET</text>
+</svg>

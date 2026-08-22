@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" fill="#FAF6F0" />
+  <rect x="20" y="20" width="160" height="160" rx="4" fill="none" stroke="#2B2119" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.2"/>
+  
+  <!-- Ribbon glow -->
+  <circle cx="100" cy="105" r="45" fill="#B8804A" opacity="0.1" filter="blur(8px)" />
+  
+  <g stroke="#B8804A" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Gift Box Base -->
+    <rect x="58" y="80" width="84" height="68" rx="2" fill="#FAF6F0" />
+    
+    <!-- Gift Box Lid -->
+    <rect x="54" y="70" width="92" height="14" rx="2" fill="#FAF6F0" />
+    
+    <!-- Ribbon Vertical -->
+    <line x1="100" y1="70" x2="100" y2="148" stroke="#D9A679" stroke-width="3" />
+    <line x1="100" y1="70" x2="100" y2="148" stroke="#B8804A" stroke-width="1" />
+    
+    <!-- Ribbon Horizontal -->
+    <line x1="58" y1="114" x2="142" y2="114" stroke="#D9A679" stroke-width="3" />
+    <line x1="58" y1="114" x2="142" y2="114" stroke="#B8804A" stroke-width="1" />
+    
+    <!-- Ribbon Bow loop left -->
+    <path d="M100,70 C88,54 82,68 100,70 Z" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.5" />
+    
+    <!-- Ribbon Bow loop right -->
+    <path d="M100,70 C112,54 118,68 100,70 Z" fill="#FAF6F0" stroke="#B8804A" stroke-width="1.5" />
+    
+    <!-- Ribbon tails -->
+    <path d="M100,70 Q94,84 88,88" />
+    <path d="M100,70 Q106,84 112,88" />
+    
+    <!-- Editorial label inside the box bottom-right -->
+    <rect x="110" y="124" width="22" height="14" rx="1" stroke="#2B2119" stroke-width="0.8" fill="#FAF6F0" />
+    <line x1="114" y1="131" x2="128" y2="131" stroke="#2B2119" stroke-width="0.5" />
+  </g>
+</svg>

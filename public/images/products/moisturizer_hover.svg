@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" fill="#FAF6F0" />
+  <circle cx="100" cy="100" r="70" fill="none" stroke="#2B2119" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.1"/>
+  <!-- Whipped cream swirl -->
+  <g stroke="#B8804A" stroke-width="1.5" fill="none" stroke-linecap="round">
+    <path d="M100,130 C80,130 65,115 65,95 C65,75 85,60 105,65 C120,70 135,85 130,105 C125,120 110,130 100,120 C90,110 95,95 105,95 C112,95 118,102 114,108 C112,112 106,112 104,108 Z" stroke-dasharray="1,1" stroke-width="2"/>
+    <path d="M100,130 C80,130 65,115 65,95 C65,75 85,60 105,65 C120,70 135,85 130,105 C125,120 110,130 100,120" stroke="#D9A679" stroke-width="1.2" />
+  </g>
+  <text x="100" y="160" font-family="var(--font-inter), sans-serif" font-size="8" font-weight="400" fill="#2B2119" opacity="0.3" text-anchor="middle" letter-spacing="2">WHIPPED SOUFFLE</text>
+</svg>
