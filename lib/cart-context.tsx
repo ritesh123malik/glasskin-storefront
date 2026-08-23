@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useMemo } from "react";
-import { Product, mockProducts } from "@/lib/products";
+import { Product } from "@/lib/products";
 
 export interface CartItem {
   product: Product;
@@ -27,13 +27,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const FREE_SHIPPING_THRESHOLD = 999;
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  // Pre-populate with 1 item so the drawer looks great on initial inspection
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      product: mockProducts[2], // Glass Skin Glaze Serum
-      quantity: 1,
-    },
-  ]);
+  const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const openCart = () => setIsOpen(true);

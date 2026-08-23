@@ -40,11 +40,13 @@ export default function Hero() {
         {/* Right: Lifestyle Image (55% on desktop, order-1 on mobile so it sits at the top) */}
         <div className="w-full lg:w-[55%] relative min-h-[350px] lg:min-h-auto order-1 lg:order-2 border-b lg:border-b-0 lg:border-l border-brand-text/5 bg-brand-text/[0.02]">
           <div className="absolute inset-0 w-full h-full">
+            {/* TODO: replace with GLASSSKIN's actual product photography */}
             <Image
-              src="/images/hero_lifestyle.svg"
-              alt="Luxury Skincare Art"
+              src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1600&q=85"
+              alt="Model with radiant, translucent glass skin ritual"
               fill
               priority
+              sizes="(max-width: 1024px) 100vw, 55vw"
               className="object-cover"
             />
           </div>

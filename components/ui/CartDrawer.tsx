@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { useCart, FREE_SHIPPING_THRESHOLD } from "@/lib/cart-context";
@@ -82,50 +83,53 @@ export default function CartDrawer() {
                 </button>
               </div>
 
-              {/* Free Shipping Progress Bar */}
-              <div className="bg-brand-secondary/15 px-6 py-3.5 border-b border-brand-text/5">
-                <div className="flex items-center justify-between text-[11px] mb-2">
-                  {subtotal >= FREE_SHIPPING_THRESHOLD ? (
-                    <span className="font-medium text-brand-text flex items-center gap-1.5">
-                      <Sparkles size={13} className="text-brand-accent" />
-                      Complimentary express shipping unlocked!
+              {/* Free Shipping Progress Bar (only when items exist) */}
+              {items.length > 0 && (
+                <div className="bg-brand-secondary/15 px-6 py-3.5 border-b border-brand-text/5">
+                  <div className="flex items-center justify-between text-[11px] mb-2">
+                    {subtotal >= FREE_SHIPPING_THRESHOLD ? (
+                      <span className="font-medium text-brand-text flex items-center gap-1.5">
+                        <Sparkles size={13} className="text-brand-accent" />
+                        Complimentary express shipping unlocked!
+                      </span>
+                    ) : (
+                      <span className="text-brand-text/75">
+                        Add <strong className="text-brand-accent font-semibold">₹{remainingForFreeShipping.toLocaleString("en-IN")}</strong> more for complimentary shipping
+                      </span>
+                    )}
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-brand-text/50">
+                      {Math.round(freeShippingProgress)}%
                     </span>
-                  ) : (
-                    <span className="text-brand-text/75">
-                      Add <strong className="text-brand-accent font-semibold">₹{remainingForFreeShipping.toLocaleString("en-IN")}</strong> more for complimentary shipping
-                    </span>
-                  )}
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-text/50">
-                    {Math.round(freeShippingProgress)}%
-                  </span>
+                  </div>
+                  <div className="w-full bg-brand-text/10 h-1.5 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${freeShippingProgress}%` }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                      className="h-full bg-brand-accent rounded-full"
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-brand-text/10 h-1.5 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${freeShippingProgress}%` }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="h-full bg-brand-accent rounded-full"
-                  />
-                </div>
-              </div>
+              )}
 
-              {/* Items List */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Items List / Empty State */}
+              <div className="flex-1 overflow-y-auto p-6">
                 {items.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center py-16">
-                    <div className="w-16 h-16 rounded-full bg-brand-text/5 flex items-center justify-center text-brand-text/40 mb-4">
-                      <ShoppingBag size={24} className="stroke-[1.5]" />
+                  <div className="h-full flex flex-col items-center justify-center text-center py-16 px-4">
+                    <div className="w-20 h-20 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-accent mb-6 shadow-sm">
+                      <ShoppingBag size={32} className="stroke-[1.25]" />
                     </div>
-                    <h3 className="font-serif text-lg font-light mb-2 text-brand-text">Your ritual bag is empty</h3>
-                    <p className="text-xs text-brand-text/60 max-w-xs mb-8 font-light">
-                      Nurture your skin barrier with our handcrafted botanicals and peptide formulas.
+                    <h3 className="font-serif text-2xl font-light mb-3 text-brand-text">Your bag is empty</h3>
+                    <p className="text-xs text-brand-text/60 max-w-xs mb-8 font-light leading-relaxed">
+                      Nurture your skin barrier with our handcrafted botanicals, soothing lipids, and bio-compatible peptide formulas.
                     </p>
-                    <button
+                    <Link
+                      href="/shop"
                       onClick={closeCart}
-                      className="bg-brand-accent text-brand-bg hover:bg-brand-secondary px-8 py-3 text-xs uppercase tracking-[0.2em] font-semibold rounded transition-colors duration-300"
+                      className="inline-flex items-center justify-center bg-brand-accent text-brand-bg hover:bg-brand-secondary px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-semibold rounded shadow-md hover:shadow-lg transition-all duration-300 active:scale-[0.99]"
                     >
-                      Explore Formulations
-                    </button>
+                      Continue Shopping
+                    </Link>
                   </div>
                 ) : (
                   <ul className="divide-y divide-brand-text/5" role="list">

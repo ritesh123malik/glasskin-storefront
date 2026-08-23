@@ -15,16 +15,17 @@ function InstagramIcon({ size = 14 }: { size?: number }) {
   );
 }
 
+// TODO: replace with GLASSSKIN's actual product photography
 const socialPhotos = [
-  { id: 1, src: "/images/social/social-1.svg", alt: "Glass Skin Serum flat lay" },
-  { id: 2, src: "/images/social/social-2.svg", alt: "Glass skin glow close-up" },
-  { id: 3, src: "/images/social/social-3.svg", alt: "Barrier cream jar with oats" },
-  { id: 4, src: "/images/social/social-4.svg", alt: "Ritual elixir dropper vials" },
-  { id: 5, src: "/images/social/social-5.svg", alt: "Oat botanical extract sprig" },
-  { id: 6, src: "/images/social/social-6.svg", alt: "Invisible Dew SPF pump bottle" },
-  { id: 7, src: "/images/social/social-7.svg", alt: "Gift set box unboxing" },
-  { id: 8, src: "/images/social/social-8.svg", alt: "Macro serum elixir droplet" },
-  { id: 9, src: "/images/social/social-9.svg", alt: "Morning ritual flatlay" },
+  { id: 1, src: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80", alt: "Whipped barrier cream swirl texture" },
+  { id: 2, src: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80", alt: "Radiant glass skin luminous glow close-up" },
+  { id: 3, src: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=800&q=80", alt: "Amber glass peptide dropper vial" },
+  { id: 4, src: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80", alt: "Minimalist skincare morning ritual bottles" },
+  { id: 5, src: "https://images.unsplash.com/photo-1512290903422-9218d6e326aa?auto=format&fit=crop&w=800&q=80", alt: "Botanical extracts and skincare ingredients" },
+  { id: 6, src: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80", alt: "Sunlit dewy skin glow ritual" },
+  { id: 7, src: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800&q=80", alt: "Macro glass serum droplet reflecting light" },
+  { id: 8, src: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80", alt: "Ceramide melting cream jar on linen" },
+  { id: 9, src: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=800&q=80", alt: "Complete ritual set collection flatlay" },
 ];
 
 // Triple the array for a seamless infinite loop

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -107,23 +108,30 @@ export default function ProductCarousel() {
                 key={product.id}
                 className="embla__slide flex-none w-[78vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] xl:w-[18.2vw] flex flex-col group relative"
               >
-                {/* Images Wrapper with hover crossfade */}
+                {/* Images Wrapper — clicking navigates to PDP */}
+                <Link href={`/product/${product.id}`} className="block">
                 <div className="relative aspect-[4/5] rounded overflow-hidden mb-4 bg-brand-text/5 border border-brand-text/5">
                   
                   {/* Default Image */}
-                  <div 
-                    className={`absolute inset-0 bg-cover bg-center transition-all duration-700 ease-in-out group-hover:opacity-0 ${
+                  <Image 
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 640px) 78vw, (max-width: 1024px) 30vw, 20vw"
+                    className={`object-cover transition-all duration-700 ease-in-out group-hover:opacity-0 ${
                       !product.inStock ? "grayscale opacity-60" : ""
                     }`}
-                    style={{ backgroundImage: `url(${product.image})` }}
                   />
 
                   {/* Hover Image */}
-                  <div 
-                    className={`absolute inset-0 bg-cover bg-center opacity-0 transition-all duration-700 ease-in-out group-hover:opacity-100 ${
+                  <Image 
+                    src={product.hoverImage}
+                    alt={`${product.name} texture and lifestyle swatch`}
+                    fill
+                    sizes="(max-width: 640px) 78vw, (max-width: 1024px) 30vw, 20vw"
+                    className={`object-cover opacity-0 transition-all duration-700 ease-in-out group-hover:opacity-100 ${
                       !product.inStock ? "grayscale opacity-0" : ""
                     }`}
-                    style={{ backgroundImage: `url(${product.hoverImage})` }}
                   />
 
                   {/* Sold Out Overlay */}
@@ -135,6 +143,7 @@ export default function ProductCarousel() {
                     </div>
                   )}
                 </div>
+                </Link>
 
                 {/* Info */}
                 <div className="text-left flex-grow flex flex-col">
@@ -147,9 +156,11 @@ export default function ProductCarousel() {
                     </span>
                   </div>
 
+                  <Link href={`/product/${product.id}`}>
                   <h3 className="font-serif text-sm font-light tracking-wide text-brand-text group-hover:text-brand-accent transition-colors leading-relaxed mb-3">
                     {product.name}
                   </h3>
+                  </Link>
 
                   {/* Quick Add Button or Sold Out state */}
                   <button 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -119,13 +120,16 @@ export default function Header() {
                         {mockCategories.map((category) => (
                           <Link 
                             key={category.id} 
-                            href={`#${category.id}`}
+                            href={`/shop?category=${category.id}`}
                             className="group flex flex-col items-start text-left"
                           >
-                            <div className="relative aspect-square w-full bg-brand-text/5 rounded overflow-hidden mb-3">
-                              {/* Simple representation of image placeholder/src */}
-                              <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" 
-                                   style={{ backgroundImage: `url(${category.featuredProduct.image})` }} 
+                            <div className="relative aspect-square w-full bg-brand-text/5 rounded overflow-hidden mb-3 group-hover:shadow-sm transition-shadow">
+                              <Image
+                                src={category.featuredProduct.image}
+                                alt={category.name}
+                                fill
+                                sizes="140px"
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
                               />
                               <div className="absolute inset-0 bg-brand-text/5 group-hover:bg-transparent transition-colors" />
                             </div>
@@ -137,6 +141,16 @@ export default function Header() {
                             </span>
                           </Link>
                         ))}
+                        {/* Shop all row */}
+                        <div className="col-span-5 border-t border-brand-text/5 pt-4 mt-2">
+                          <Link
+                            href="/shop"
+                            className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-semibold text-brand-accent hover:gap-2.5 transition-all duration-200"
+                          >
+                            Shop All Products
+                            <ChevronDown size={11} className="-rotate-90" />
+                          </Link>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -234,7 +248,7 @@ export default function Header() {
                       {mockCategories.map((category) => (
                         <Link 
                           key={category.id} 
-                          href={`#${category.id}`} 
+                          href={`/shop?category=${category.id}`} 
                           onClick={() => setIsDrawerOpen(false)}
                           className="flex items-center justify-between group hover:text-brand-accent transition-colors font-medium text-xs"
                         >
@@ -248,6 +262,13 @@ export default function Header() {
                     </div>
                   </div>
 
+                  <Link 
+                    href="/shop" 
+                    onClick={() => setIsDrawerOpen(false)}
+                    className="hover:text-brand-accent transition-colors py-2 border-b border-brand-text/10 text-brand-accent"
+                  >
+                    Shop All Products →
+                  </Link>
                   <Link 
                     href="#rituals" 
                     onClick={() => setIsDrawerOpen(false)}

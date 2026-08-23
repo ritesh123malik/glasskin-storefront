@@ -35,40 +35,48 @@ export default function BrandStory() {
             
             {/* Box 1: Cleanser Texture */}
             <div className="relative aspect-[4/5] rounded bg-brand-text/5 border border-brand-text/5 overflow-hidden shadow-sm">
+              {/* TODO: replace with GLASSSKIN's actual product photography */}
               <Image 
-                src="/images/products/cleanser_hover.svg" 
-                alt="Formulation Texture" 
+                src="https://images.unsplash.com/photo-1608248597359-00f73b6aa8a8?auto=format&fit=crop&w=800&q=80" 
+                alt="Silky cleansing oil formulation texture" 
                 fill 
+                sizes="(max-width: 1024px) 50vw, 20vw"
                 className="object-cover"
               />
             </div>
             
             {/* Box 2: Serum Dropper (Offset) */}
             <div className="relative aspect-[4/5] rounded bg-brand-text/5 border border-brand-text/5 overflow-hidden shadow-md translate-y-6">
+              {/* TODO: replace with GLASSSKIN's actual product photography */}
               <Image 
-                src="/images/products/serum.svg" 
-                alt="Glaze Serum bottle" 
+                src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=800&q=80" 
+                alt="Glass Skin Glaze Serum glass bottle" 
                 fill 
+                sizes="(max-width: 1024px) 50vw, 20vw"
                 className="object-cover"
               />
             </div>
 
             {/* Box 3: Cream Jar (Offset) */}
             <div className="relative aspect-[4/5] rounded bg-brand-text/5 border border-brand-text/5 overflow-hidden shadow-md -translate-y-6">
+              {/* TODO: replace with GLASSSKIN's actual product photography */}
               <Image 
-                src="/images/products/moisturizer.svg" 
-                alt="Melting Cream Jar" 
+                src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80" 
+                alt="Ceramide Melting Barrier Cream pot" 
                 fill 
+                sizes="(max-width: 1024px) 50vw, 20vw"
                 className="object-cover"
               />
             </div>
 
-            {/* Box 4: Serum Texture */}
+            {/* Box 4: Luminous Skin Texture */}
             <div className="relative aspect-[4/5] rounded bg-brand-text/5 border border-brand-text/5 overflow-hidden shadow-sm">
+              {/* TODO: replace with GLASSSKIN's actual product photography */}
               <Image 
-                src="/images/products/serum_hover.svg" 
-                alt="Droplets texture Close-up" 
+                src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" 
+                alt="Radiant, translucent dewy skin close-up" 
                 fill 
+                sizes="(max-width: 1024px) 50vw, 20vw"
                 className="object-cover"
               />
             </div>
