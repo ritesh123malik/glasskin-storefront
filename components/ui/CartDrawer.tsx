@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,14 +18,46 @@ export default function CartDrawer() {
     subtotal,
   } = useCart();
 
-  // Close drawer on escape key
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  // Close drawer on escape key & Focus trap
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeCart();
+      if (e.key === "Escape") {
+        closeCart();
+        return;
+      }
+
+      if (e.key === "Tab" && drawerRef.current) {
+        const focusableElements = drawerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
     };
+
     if (isOpen) {
       window.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
+      setTimeout(() => {
+        const closeBtn = drawerRef.current?.querySelector<HTMLButtonElement>('button[aria-label="Close cart"]');
+        closeBtn?.focus();
+      }, 50);
     }
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
@@ -54,6 +86,7 @@ export default function CartDrawer() {
           {/* Slide-in Drawer */}
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
             <motion.div
+              ref={drawerRef}
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}

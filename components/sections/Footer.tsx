@@ -38,10 +38,16 @@ const supportLinks = ["FAQ", "Contact Us", "Order Tracking", "Returns & Exchange
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    setError("");
     setSubmitted(true);
     setEmail("");
   };
@@ -78,21 +84,32 @@ export default function Footer() {
               Welcome to the ritual. Your code is on its way. ✦
             </p>
           ) : (
-            <form onSubmit={handleSubmit} className="flex gap-0 rounded overflow-hidden border border-brand-text/15 focus-within:border-brand-accent transition-colors duration-300">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="flex-1 bg-transparent px-4 py-3 text-xs text-brand-text placeholder:text-brand-text/35 outline-none"
-              />
-              <button
-                type="submit"
-                className="bg-brand-accent text-brand-bg hover:bg-brand-secondary px-5 py-3 text-[10px] uppercase tracking-[0.2em] font-bold transition-colors duration-300 whitespace-nowrap"
-              >
-                Subscribe
-              </button>
+            <form onSubmit={handleSubmit} noValidate className="space-y-2">
+              <div className="flex gap-0 rounded overflow-hidden border border-brand-text/15 focus-within:border-brand-accent transition-colors duration-300">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (error) setError("");
+                  }}
+                  placeholder="your@email.com"
+                  aria-label="Email address for 10% discount"
+                  className="flex-1 bg-transparent px-4 py-3 text-xs text-brand-text placeholder:text-brand-text/35 outline-none"
+                />
+                <button
+                  type="submit"
+                  className="bg-brand-accent text-brand-bg hover:bg-brand-secondary px-5 py-3 text-[10px] uppercase tracking-[0.2em] font-bold transition-colors duration-300 whitespace-nowrap"
+                >
+                  Subscribe
+                </button>
+              </div>
+              {error && (
+                <p className="text-[10px] text-red-600 text-left font-medium">
+                  {error}
+                </p>
+              )}
             </form>
           )}
           <p className="text-[9px] text-brand-text/35 mt-2 tracking-wide">

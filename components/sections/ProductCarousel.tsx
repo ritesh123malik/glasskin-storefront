@@ -106,8 +106,23 @@ export default function ProductCarousel() {
           </div>
         </div>
 
-        {/* Embla Viewport */}
-        <div className="embla overflow-hidden" ref={emblaRef}>
+        {/* Embla Viewport (supports ArrowLeft and ArrowRight keyboard navigation) */}
+        <div 
+          className="embla overflow-hidden focus:outline-none focus:ring-1 focus:ring-brand-accent/50 rounded" 
+          ref={emblaRef}
+          tabIndex={0}
+          role="region"
+          aria-label="Product carousel"
+          onKeyDown={(e) => {
+            if (e.key === "ArrowLeft") {
+              e.preventDefault();
+              scrollPrev();
+            } else if (e.key === "ArrowRight") {
+              e.preventDefault();
+              scrollNext();
+            }
+          }}
+        >
           <div className="embla__container flex gap-6">
             {products.map((product) => (
               <div

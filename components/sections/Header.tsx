@@ -100,9 +100,16 @@ export default function Header() {
                 className="relative"
                 onMouseEnter={() => setIsShopDropdownOpen(true)}
                 onMouseLeave={() => setIsShopDropdownOpen(false)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") setIsShopDropdownOpen(false);
+                }}
               >
                 <button 
-                  className="flex items-center gap-1 hover:text-brand-accent transition-colors py-2"
+                  onClick={() => setIsShopDropdownOpen((prev) => !prev)}
+                  onFocus={() => setIsShopDropdownOpen(true)}
+                  aria-expanded={isShopDropdownOpen}
+                  aria-haspopup="true"
+                  className="flex items-center gap-1 hover:text-brand-accent transition-colors py-2 focus:outline-none focus:text-brand-accent"
                 >
                   Shop
                   <ChevronDown size={12} className={`transition-transform duration-300 ${isShopDropdownOpen ? "rotate-180" : ""}`} />
