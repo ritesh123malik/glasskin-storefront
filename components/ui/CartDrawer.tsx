@@ -229,13 +229,14 @@ export default function CartDrawer() {
                   </div>
 
                   {/* Checkout Button */}
-                  <button
-                    onClick={() => alert("Redirecting to secure luxury checkout...")}
+                  <Link
+                    href="/cart"
+                    onClick={closeCart}
                     className="w-full bg-brand-accent hover:bg-brand-secondary text-brand-bg py-3.5 px-6 rounded text-xs uppercase tracking-[0.2em] font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 group"
                   >
                     <span>Proceed to Checkout</span>
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
+                  </Link>
 
                   <div className="flex items-center justify-center gap-4 text-[10px] text-brand-text/45 uppercase tracking-wider pt-1">
                     <span className="flex items-center gap-1">
