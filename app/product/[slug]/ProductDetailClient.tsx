@@ -15,7 +15,7 @@ import {
   RotateCcw,
   ShieldCheck,
 } from "lucide-react";
-import { mockProducts, Product } from "@/lib/products";
+import { Product } from "@/lib/products";
 import { CartProvider, useCart } from "@/lib/cart-context";
 import CartDrawer from "@/components/ui/CartDrawer";
 import Header from "@/components/sections/Header";
@@ -102,12 +102,10 @@ function RelatedCard({ product }: { product: Product }) {
 }
 
 // ─── Main product detail inner (inside CartProvider) ──────────────────────────
-function ProductDetailInner({ product }: { product: Product }) {
+function ProductDetailInner({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
   const { addItem, openCart } = useCart();
 
-  const related = mockProducts
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+  const related = relatedProducts;
 
   const gallery = [product.image, product.hoverImage];
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
@@ -385,12 +383,12 @@ function ProductDetailInner({ product }: { product: Product }) {
 }
 
 // ─── Exported client component (wraps in CartProvider) ────────────────────────
-export default function ProductDetailClient({ product }: { product: Product }) {
+export default function ProductDetailClient({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
   return (
     <CartProvider>
       <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
         <Header />
-        <ProductDetailInner product={product} />
+        <ProductDetailInner product={product} relatedProducts={relatedProducts} />
         <Footer />
         <CartDrawer />
       </div>

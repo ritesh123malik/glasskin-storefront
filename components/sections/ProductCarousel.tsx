@@ -5,11 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { mockProducts } from "@/lib/products";
+import { Product } from "@/lib/products";
+import { getProductsFromSupabase } from "@/lib/supabase";
 import { useCart } from "@/lib/cart-context";
 
 export default function ProductCarousel() {
   const { addItem } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    getProductsFromSupabase().then((data) => setProducts(data));
+  }, []);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     containScroll: "trimSnaps",
@@ -103,7 +109,7 @@ export default function ProductCarousel() {
         {/* Embla Viewport */}
         <div className="embla overflow-hidden" ref={emblaRef}>
           <div className="embla__container flex gap-6">
-            {mockProducts.map((product) => (
+            {products.map((product) => (
               <div
                 key={product.id}
                 className="embla__slide flex-none w-[78vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] xl:w-[18.2vw] flex flex-col group relative"

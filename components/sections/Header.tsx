@@ -125,7 +125,7 @@ export default function Header() {
                           >
                             <div className="relative aspect-square w-full bg-brand-text/5 rounded overflow-hidden mb-3 group-hover:shadow-sm transition-shadow">
                               <Image
-                                src={category.featuredProduct.image}
+                                src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=400&q=80"
                                 alt={category.name}
                                 fill
                                 sizes="140px"

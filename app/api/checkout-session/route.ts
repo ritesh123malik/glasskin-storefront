@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
-import { mockProducts } from "@/lib/products";
+import { getProductsFromSupabase } from "@/lib/supabase";
 import { lookupPromo } from "@/lib/promos";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -41,9 +41,10 @@ export async function POST(req: NextRequest) {
     }[] = [];
 
     let subtotalPaise = 0;
+    const products = await getProductsFromSupabase();
 
     for (const item of items) {
-      const product = mockProducts.find((p) => p.id === item.productId);
+      const product = products.find((p) => p.id === item.productId);
 
       if (!product) {
         return NextResponse.json(
