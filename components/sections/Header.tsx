@@ -15,10 +15,12 @@ import {
 } from "lucide-react";
 import { mockCategories } from "@/lib/products";
 import { useCart } from "@/lib/cart-context";
+import SearchModal from "@/components/ui/SearchModal";
 
 export default function Header() {
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
   const { totalItems: cartCount, openCart } = useCart();
@@ -179,17 +181,19 @@ export default function Header() {
           {/* Right: Icons */}
           <div className="flex items-center justify-end gap-4 md:gap-6 flex-1">
             <button 
+              onClick={() => setIsSearchOpen(true)}
               className="p-1.5 hover:text-brand-accent transition-colors hidden sm:block" 
               aria-label="Search products"
             >
               <Search size={20} className="stroke-[1.5]" />
             </button>
-            <button 
+            <Link 
+              href="/account"
               className="p-1.5 hover:text-brand-accent transition-colors hidden sm:block" 
               aria-label="User account"
             >
               <User size={20} className="stroke-[1.5]" />
-            </button>
+            </Link>
             <button 
               onClick={openCart}
               className="p-1.5 hover:text-brand-accent transition-colors relative" 
@@ -205,6 +209,9 @@ export default function Header() {
           </div>
         </div>
       </header>
+
+      {/* Search Modal */}
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       {/* Drawer Mega Menu (Slide-in left side menu) */}
       <AnimatePresence>
@@ -268,6 +275,14 @@ export default function Header() {
                     className="hover:text-brand-accent transition-colors py-2 border-b border-brand-text/10 text-brand-accent"
                   >
                     Shop All Products →
+                  </Link>
+                  <Link 
+                    href="/account" 
+                    onClick={() => setIsDrawerOpen(false)}
+                    className="hover:text-brand-accent transition-colors py-2 border-b border-brand-text/10 flex items-center justify-between"
+                  >
+                    <span>Client Portal / Account</span>
+                    <User size={16} className="text-brand-accent" />
                   </Link>
                   <Link 
                     href="#rituals" 
