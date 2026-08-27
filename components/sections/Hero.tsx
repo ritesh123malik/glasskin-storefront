@@ -47,13 +47,13 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-4">
               <Link
                 href="#shop-carousel"
-                className="btn-play-solid bg-brand-accent text-[11px] md:text-xs px-9 py-4"
+                className="btn-play-solid bg-brand-accent text-[11px] md:text-xs px-9 py-8"
               >
                 Shop the Glow
               </Link>
               <Link
                 href="/skin-quiz"
-                className="btn-play bg-white text-brand-text border-4 border-brand-text px-9 py-4 text-[11px] md:text-xs hover:bg-brand-yellow"
+                className="btn-play bg-white text-brand-text border-4 border-brand-text px-9 py-8 text-[11px] md:text-xs hover:bg-brand-yellow"
               >
                 Find My Ritual
               </Link>
@@ -102,7 +102,7 @@ export default function Hero() {
       </div>
 
       {/* Infinite Auto-Scrolling Marquee Strip */}
-      <div className="w-full overflow-hidden bg-brand-blue py-4 flex items-center select-none relative z-10">
+      <div className="w-full overflow-hidden bg-brand-blue py-8 flex items-center select-none relative z-10">
         <style dangerouslySetInnerHTML={{__html: `
           @keyframes marquee {
             0% { transform: translateX(0%); }
@@ -110,10 +110,12 @@ export default function Hero() {
           }
           .animate-marquee-css {
             animation: marquee 25s linear infinite;
+            width: 200%;
+            display: flex;
           }
         `}} />
-        <div className="flex w-full overflow-hidden">
-          <div className="animate-marquee-css flex whitespace-nowrap gap-4 text-sm md:text-base font-extrabold uppercase tracking-wider text-white font-rounded">
+        <div className="flex w-full">
+          <div className="animate-marquee-css whitespace-nowrap gap-4 text-lg md:text-2xl font-extrabold uppercase tracking-wider text-white font-rounded">
             {Array.from({ length: 4 }).map((_, i) => (
               <span key={i} className="flex items-center">
                 <span>Made in Small Batches</span>
