@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   User,
   Mail,
@@ -410,6 +411,12 @@ function AccountContent() {
                             </button>
                           </div>
                         )}
+                        <Link
+                          href={`/order/${order.order_number}`}
+                          className="text-[10px] uppercase tracking-widest font-semibold text-brand-accent hover:underline inline-flex items-center gap-1"
+                        >
+                          Track Order <ArrowRight size={11} />
+                        </Link>
                       </div>
                     );
                   })

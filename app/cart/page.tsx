@@ -40,8 +40,6 @@ function CartPageInner() {
     { state: "idle" } | { state: "valid"; discount: number; label: string } | { state: "invalid"; message: string }
   >({ state: "idle" });
   const [promoLoading, setPromoLoading] = useState(false);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [checkoutError, setCheckoutError] = useState("");
 
   // Cash on Delivery
   const [codOpen, setCodOpen] = useState(false);
@@ -87,34 +85,6 @@ function CartPageInner() {
       }
     } finally {
       setPromoLoading(false);
-    }
-  }
-
-  // ─── Start Stripe checkout ─────────────────────────────────────────────────
-  async function handleCheckout() {
-    setCheckoutLoading(true);
-    setCheckoutError("");
-    try {
-      const res = await fetch("/api/checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((i) => ({ variantId: i.product.variantId, quantity: i.quantity })),
-          promoCode: promoStatus.state === "valid" ? promoInput.trim() : undefined,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        setCheckoutError(data.error ?? "Something went wrong. Please try again.");
-        return;
-      }
-      // Redirect to Stripe-hosted checkout
-      window.location.href = data.url;
-    } catch {
-      setCheckoutError("Network error. Please check your connection and try again.");
-    } finally {
-      setCheckoutLoading(false);
     }
   }
 
@@ -448,38 +418,14 @@ function CartPageInner() {
                 </div>
               </div>
 
-              {/* Error */}
-              <AnimatePresence>
-                {checkoutError && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-sm px-3 py-2.5"
-                  >
-                    {checkoutError}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-
               {/* Checkout CTA */}
-              <button
-                onClick={handleCheckout}
-                disabled={checkoutLoading}
-                className="w-full bg-brand-accent hover:bg-brand-secondary text-brand-bg py-4 rounded-sm text-xs uppercase tracking-[0.22em] font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 group disabled:opacity-60 disabled:cursor-wait"
+              <Link
+                href={items.length > 0 ? "/checkout" : "/shop"}
+                className="w-full bg-brand-accent hover:bg-brand-secondary text-brand-bg py-4 rounded-sm text-xs uppercase tracking-[0.22em] font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 group"
               >
-                {checkoutLoading ? (
-                  <>
-                    <span className="inline-block w-4 h-4 border-2 border-brand-bg/40 border-t-brand-bg rounded-full animate-spin" />
-                    Redirecting…
-                  </>
-                ) : (
-                  <>
-                    Proceed to Checkout
-                    <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                  </>
-                )}
-              </button>
+                Proceed to Checkout
+                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
 
               {/* Cash on Delivery */}
               {process.env.NEXT_PUBLIC_COD_ENABLED !== "false" && (

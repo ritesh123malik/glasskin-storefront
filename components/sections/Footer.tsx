@@ -49,7 +49,7 @@ const aboutLinks = [
 const supportLinks = [
   { label: "FAQ", href: "#" },
   { label: "Contact Us", href: "/contact" },
-  { label: "Order Tracking", href: "/account" },
+  { label: "Order Tracking", href: "/order" },
   { label: "Returns & Exchanges", href: "/legal/refund-policy" },
   { label: "Store Locator", href: "#" },
 ];
