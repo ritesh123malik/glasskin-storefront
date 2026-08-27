@@ -40,18 +40,18 @@ const shopLinks = [
   { label: "New Arrivals", href: "/shop" },
 ];
 const aboutLinks = [
-  { label: "Our Story", href: "#" },
-  { label: "Ingredients", href: "#" },
-  { label: "Sustainability", href: "#" },
-  { label: "Press", href: "#" },
-  { label: "Careers", href: "#" },
+  { label: "Our Story", href: "/about/our-story" },
+  { label: "Ingredients", href: "/about/ingredients" },
+  { label: "Sustainability", href: "/about/sustainability" },
+  { label: "Press", href: "/about/press" },
+  { label: "Careers", href: "/about/careers" },
 ];
 const supportLinks = [
-  { label: "FAQ", href: "#" },
+  { label: "FAQ", href: "/support/faq" },
   { label: "Contact Us", href: "/contact" },
-  { label: "Order Tracking", href: "/order" },
+  { label: "Order Tracking", href: "/support/order-tracking" },
   { label: "Returns & Exchanges", href: "/legal/refund-policy" },
-  { label: "Store Locator", href: "#" },
+  { label: "Store Locator", href: "/support/store-locator" },
 ];
 
 export default function Footer() {

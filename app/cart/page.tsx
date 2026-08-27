@@ -264,7 +264,7 @@ function CartPageInner() {
 
                     <div className="flex items-center justify-between mt-4">
                       {/* Quantity stepper */}
-                      <div className="flex items-center border border-brand-text/15 rounded-sm overflow-hidden">
+                      <div className="flex items-center border border-brand-text/15 rounded-full overflow-hidden">
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                           className="px-2.5 py-2 hover:bg-brand-text/5 text-brand-text/70 transition-colors"
@@ -334,7 +334,7 @@ function CartPageInner() {
                     placeholder="e.g. WELCOME10"
                     autoComplete="off"
                     spellCheck={false}
-                    className="flex-1 border border-brand-text/15 rounded-sm px-3 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent transition-colors placeholder:text-brand-text/25 tracking-widest font-medium uppercase"
+                    className="flex-1 border border-brand-text/15 rounded-full px-4 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent transition-colors placeholder:text-brand-text/25 tracking-widest font-medium uppercase"
                   />
                   <button
                     onClick={handleApplyPromo}
@@ -421,7 +421,7 @@ function CartPageInner() {
               {/* Checkout CTA */}
               <Link
                 href={items.length > 0 ? "/checkout" : "/shop"}
-                className="w-full bg-brand-accent hover:bg-brand-secondary text-brand-bg py-4 rounded-sm text-xs uppercase tracking-[0.22em] font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 group"
+                className="btn-play-solid bg-brand-accent w-full py-4 text-xs uppercase tracking-[0.2em]"
               >
                 Proceed to Checkout
                 <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
@@ -433,22 +433,22 @@ function CartPageInner() {
                 {!codOpen ? (
                   <button
                     onClick={() => setCodOpen(true)}
-                    className="w-full border border-brand-text/20 text-brand-text py-3.5 rounded-sm text-[11px] uppercase tracking-[0.2em] font-semibold hover:border-brand-accent hover:text-brand-accent transition-colors"
+                    className="w-full border border-brand-text/20 text-brand-text py-3.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-bold hover:border-brand-accent hover:text-brand-accent transition-colors"
                   >
                     Pay by Cash on Delivery
                   </button>
                 ) : (
-                  <div className="space-y-3 border border-brand-text/15 rounded-sm p-4">
+                  <div className="space-y-3 border border-brand-text/15 rounded-2xl p-5 shadow-play">
                     <p className="text-[10px] uppercase tracking-widest font-semibold text-brand-text/50">Cash on Delivery</p>
                     <div className="grid grid-cols-2 gap-2">
-                      <input value={cod.name} onChange={(e) => setCod({ ...cod, name: e.target.value })} placeholder="Full name" className="col-span-2 border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
-                      <input value={cod.email} onChange={(e) => setCod({ ...cod, email: e.target.value })} placeholder="Email" className="border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
-                      <input value={cod.phone} onChange={(e) => setCod({ ...cod, phone: e.target.value })} placeholder="Phone" className="border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
-                      <input value={cod.line1} onChange={(e) => setCod({ ...cod, line1: e.target.value })} placeholder="Address line 1" className="col-span-2 border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
-                      <input value={cod.line2} onChange={(e) => setCod({ ...cod, line2: e.target.value })} placeholder="Address line 2 (optional)" className="col-span-2 border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
-                      <input value={cod.city} onChange={(e) => setCod({ ...cod, city: e.target.value })} placeholder="City" className="border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
-                      <input value={cod.state} onChange={(e) => setCod({ ...cod, state: e.target.value })} placeholder="State" className="border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
-                      <input value={cod.pincode} onChange={(e) => setCod({ ...cod, pincode: e.target.value })} placeholder="Pincode" className="col-span-2 border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.name} onChange={(e) => setCod({ ...cod, name: e.target.value })} placeholder="Full name" className="col-span-2 border border-brand-text/15 rounded-full px-3.5 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.email} onChange={(e) => setCod({ ...cod, email: e.target.value })} placeholder="Email" className="border border-brand-text/15 rounded-full px-3.5 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.phone} onChange={(e) => setCod({ ...cod, phone: e.target.value })} placeholder="Phone" className="border border-brand-text/15 rounded-full px-3.5 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.line1} onChange={(e) => setCod({ ...cod, line1: e.target.value })} placeholder="Address line 1" className="col-span-2 border border-brand-text/15 rounded-full px-3.5 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.line2} onChange={(e) => setCod({ ...cod, line2: e.target.value })} placeholder="Address line 2 (optional)" className="col-span-2 border border-brand-text/15 rounded-full px-3.5 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.city} onChange={(e) => setCod({ ...cod, city: e.target.value })} placeholder="City" className="border border-brand-text/15 rounded-full px-3.5 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.state} onChange={(e) => setCod({ ...cod, state: e.target.value })} placeholder="State" className="border border-brand-text/15 rounded-full px-3.5 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.pincode} onChange={(e) => setCod({ ...cod, pincode: e.target.value })} placeholder="Pincode" className="col-span-2 border border-brand-text/15 rounded-full px-3.5 py-2.5 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
                     </div>
                     {codError && <p className="text-xs text-red-600">{codError}</p>}
                     <button

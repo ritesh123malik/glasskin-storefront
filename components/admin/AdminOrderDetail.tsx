@@ -72,9 +72,15 @@ export default function AdminOrderDetail({ orderId }: { orderId: string }) {
   return (
     <main className="min-h-screen bg-brand-bg text-brand-text px-6 md:px-12 py-24">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <h1 className="heading-display text-brand-text text-3xl md:text-4xl">Order #{order.order_number}</h1>
-          <span className="text-[10px] uppercase tracking-widest bg-brand-accent/10 text-brand-accent px-3 py-1 rounded-full">
+          <span className={`text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full font-bold ${
+            order.status === "cancelled" || order.status === "refunded"
+              ? "bg-brand-red text-brand-bg"
+              : order.status === "delivered"
+                ? "bg-brand-mint text-brand-text"
+                : "bg-brand-accent text-brand-bg"
+          }`}>
             {order.status.replace(/_/g, " ")}
           </span>
         </div>
@@ -82,20 +88,20 @@ export default function AdminOrderDetail({ orderId }: { orderId: string }) {
         {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-3">{error}</p>}
         {message && <p className="text-xs text-green-700 bg-green-50 border border-green-200 rounded p-3">{message}</p>}
 
-        <section className="border border-brand-text/10 rounded-lg p-6">
+        <section className="border border-brand-text/10 rounded-2xl p-6 shadow-play">
           <h2 className="text-[10px] uppercase tracking-widest font-semibold text-brand-text/50 mb-4">Items</h2>
           <ul className="divide-y divide-brand-text/5 text-sm">
             {order.items.map((item, i) => (
-              <li key={i} className="py-3 flex justify-between">
-                <span>{item.product_name} · {item.variant_title} · ×{item.quantity}</span>
-                <span className="font-semibold">₹{item.unit_price.toLocaleString("en-IN")}</span>
+              <li key={i} className="py-3 flex justify-between gap-4">
+                <span className="min-w-0">{item.product_name} · {item.variant_title} · ×{item.quantity}</span>
+                <span className="font-semibold flex-none">₹{item.unit_price.toLocaleString("en-IN")}</span>
               </li>
             ))}
           </ul>
           <p className="text-right font-semibold mt-4">Total ₹{order.grand_total.toLocaleString("en-IN")}</p>
         </section>
 
-        <section className="border border-brand-text/10 rounded-lg p-6 space-y-4">
+        <section className="border border-brand-text/10 rounded-2xl p-6 space-y-4 shadow-play">
           <h2 className="text-[10px] uppercase tracking-widest font-semibold text-brand-text/50 mb-2">Fulfilment</h2>
           <div className="flex flex-wrap gap-2">
             {(["processing", "shipped", "delivered", "cancelled"] as const).map((s) => (
@@ -103,7 +109,11 @@ export default function AdminOrderDetail({ orderId }: { orderId: string }) {
                 key={s}
                 disabled={busy}
                 onClick={() => act({ action: "state", status: s }, `Order marked ${s}.`)}
-                className="px-4 py-2 text-[10px] uppercase tracking-widest font-semibold border border-brand-text/20 hover:border-brand-accent rounded-lg disabled:opacity-50"
+                className={`px-4 py-2 text-[10px] uppercase tracking-widest font-bold rounded-full border transition-colors disabled:opacity-50 ${
+                  s === "cancelled"
+                    ? "border-brand-red text-brand-red hover:bg-brand-red hover:text-brand-bg"
+                    : "border-brand-text/20 hover:border-brand-accent hover:text-brand-accent"
+                }`}
               >
                 {s}
               </button>
@@ -115,18 +125,18 @@ export default function AdminOrderDetail({ orderId }: { orderId: string }) {
               value={carrier}
               onChange={(e) => setCarrier(e.target.value)}
               placeholder="Carrier"
-              className="flex-1 bg-transparent border border-brand-text/20 rounded px-3 py-2 text-xs"
+              className="flex-1 bg-transparent border border-brand-text/20 rounded-full px-4 py-2 text-xs focus:outline-none focus:border-brand-accent"
             />
             <input
               value={trackingNumber}
               onChange={(e) => setTrackingNumber(e.target.value)}
               placeholder="Tracking number"
-              className="flex-1 bg-transparent border border-brand-text/20 rounded px-3 py-2 text-xs"
+              className="flex-1 bg-transparent border border-brand-text/20 rounded-full px-4 py-2 text-xs focus:outline-none focus:border-brand-accent"
             />
             <button
               disabled={busy || !carrier || !trackingNumber}
               onClick={() => act({ action: "tracking", carrier, trackingNumber }, "Tracking added.")}
-              className="px-4 py-2 text-[10px] uppercase tracking-widest font-semibold bg-brand-text text-brand-bg rounded-lg disabled:opacity-50"
+              className="btn-play-solid bg-brand-text text-brand-bg px-5 py-2 text-[10px] disabled:opacity-50"
             >
               Add Tracking
             </button>
@@ -140,37 +150,37 @@ export default function AdminOrderDetail({ orderId }: { orderId: string }) {
         </section>
 
         {order.payments?.some((p) => p.method === "cash_on_delivery" && p.status === "cod_pending_collection") && (
-          <section className="border border-brand-text/10 rounded-lg p-6 space-y-3">
+          <section className="border border-brand-text/10 rounded-2xl p-6 space-y-3 shadow-play">
             <h2 className="text-[10px] uppercase tracking-widest font-semibold text-brand-text/50 mb-2">Cash on Delivery</h2>
             <p className="text-[11px] text-brand-text/60">Payment is due at delivery.</p>
             <button
               disabled={busy}
               onClick={() => act({ action: "collect_cod" }, "COD payment collected; order moved to processing.")}
-              className="px-4 py-2 text-[10px] uppercase tracking-widest font-semibold bg-brand-text text-brand-bg rounded-lg disabled:opacity-50"
+              className="btn-play-solid bg-brand-mint text-brand-text px-5 py-2 text-[10px] disabled:opacity-50"
             >
               Mark COD Collected
             </button>
           </section>
         )}
 
-        <section className="border border-brand-text/10 rounded-lg p-6 space-y-3">
+        <section className="border border-brand-text/10 rounded-2xl p-6 space-y-3 shadow-play">
           <h2 className="text-[10px] uppercase tracking-widest font-semibold text-brand-text/50 mb-2">Note</h2>
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
-            className="w-full bg-transparent border border-brand-text/20 rounded px-3 py-2 text-xs"
+            className="w-full bg-transparent border border-brand-text/20 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-brand-accent"
           />
           <button
             disabled={busy}
             onClick={() => act({ action: "note", note }, "Note saved.")}
-            className="px-4 py-2 text-[10px] uppercase tracking-widest font-semibold border border-brand-text/20 hover:border-brand-accent rounded-lg disabled:opacity-50"
+            className="px-5 py-2 text-[10px] uppercase tracking-widest font-bold rounded-full border border-brand-text/20 hover:border-brand-accent hover:text-brand-accent disabled:opacity-50"
           >
             Save Note
           </button>
         </section>
 
-        <section className="border border-brand-text/10 rounded-lg p-6 space-y-3">
+        <section className="border border-brand-text/10 rounded-2xl p-6 space-y-3 shadow-play">
           <h2 className="text-[10px] uppercase tracking-widest font-semibold text-brand-text/50 mb-2">Refund</h2>
           <p className="text-[11px] text-brand-text/60">
             Payments: {order.payments.map((p) => `${p.method} · ${p.status} · ₹${p.amount.toLocaleString("en-IN")}`).join(", ")}
@@ -181,7 +191,7 @@ export default function AdminOrderDetail({ orderId }: { orderId: string }) {
               onChange={(e) => setRefundAmount(e.target.value)}
               placeholder="Amount (empty = full)"
               inputMode="numeric"
-              className="flex-1 bg-transparent border border-brand-text/20 rounded px-3 py-2 text-xs"
+              className="flex-1 bg-transparent border border-brand-text/20 rounded-full px-4 py-2 text-xs focus:outline-none focus:border-brand-accent"
             />
             <label className="flex items-center gap-2 text-xs text-brand-text/60">
               <input type="checkbox" checked={restock} onChange={(e) => setRestock(e.target.checked)} />
@@ -195,7 +205,7 @@ export default function AdminOrderDetail({ orderId }: { orderId: string }) {
                   "Refund processed."
                 )
               }
-              className="px-4 py-2 text-[10px] uppercase tracking-widest font-semibold bg-red-600 text-white rounded-lg disabled:opacity-50"
+              className="btn-play-solid bg-brand-red text-brand-bg px-5 py-2 text-[10px] disabled:opacity-50"
             >
               Refund
             </button>
@@ -203,7 +213,7 @@ export default function AdminOrderDetail({ orderId }: { orderId: string }) {
         </section>
 
         {order.return_requests?.length > 0 && (
-          <section className="border border-brand-text/10 rounded-lg p-6">
+          <section className="border border-brand-text/10 rounded-2xl p-6 shadow-play">
             <h2 className="text-[10px] uppercase tracking-widest font-semibold text-brand-text/50 mb-2">Return Requests</h2>
             <ul className="text-xs space-y-2">
               {order.return_requests.map((r) => (

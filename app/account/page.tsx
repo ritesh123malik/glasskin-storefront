@@ -193,7 +193,7 @@ function AccountContent() {
                   animate={{ opacity: 1, y: 0 }}
                   className="text-center py-4 space-y-4"
                 >
-                  <div className="w-12 h-12 rounded-full bg-green-100 text-green-700 flex items-center justify-center mx-auto">
+                  <div className="w-12 h-12 rounded-full bg-brand-mint text-brand-text flex items-center justify-center mx-auto shadow-play">
                     <Mail size={22} />
                   </div>
                   <h3 className="font-rounded text-xl font-extrabold">Check your inbox</h3>
@@ -224,7 +224,7 @@ function AccountContent() {
                         placeholder="name@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-brand-bg border border-brand-text/20 rounded-lg px-4 py-3 text-xs text-brand-text placeholder:text-brand-text/30 focus:outline-none focus:border-brand-accent transition-colors"
+                        className="w-full bg-brand-bg border border-brand-text/20 rounded-full px-5 py-3 text-xs text-brand-text placeholder:text-brand-text/30 focus:outline-none focus:border-brand-accent transition-colors"
                       />
                     </div>
                   </div>
@@ -238,7 +238,7 @@ function AccountContent() {
                   <button
                     type="submit"
                     disabled={authLoading || !email.trim()}
-                    className="w-full bg-brand-accent hover:bg-brand-secondary text-brand-bg py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.2em] font-semibold transition-all duration-300 shadow flex items-center justify-center gap-2 group disabled:opacity-50"
+                    className="btn-play-solid bg-brand-accent w-full py-4 text-xs uppercase tracking-[0.2em]"
                   >
                     {authLoading ? (
                       <span className="w-4 h-4 border-2 border-brand-bg border-t-transparent rounded-full animate-spin" />
@@ -277,7 +277,7 @@ function AccountContent() {
 
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold border border-brand-text/20 hover:border-red-500 hover:text-red-500 px-4 py-2.5 rounded-lg transition-colors w-fit"
+                className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold border border-brand-text/20 hover:border-red-500 hover:text-red-500 px-4 py-2.5 rounded-full transition-colors w-fit"
               >
                 <LogOut size={14} />
                 Sign Out
@@ -351,7 +351,7 @@ function AccountContent() {
                     return (
                       <div
                         key={order.id}
-                        className="bg-brand-text/5 border border-brand-text/10 rounded-xl p-6 space-y-4"
+                        className="bg-brand-text/5 border border-brand-text/10 rounded-2xl p-6 space-y-4 shadow-play"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-text/10 pb-4 gap-2 text-xs">
                           <div>
@@ -362,7 +362,13 @@ function AccountContent() {
                             </span>
                           </div>
                           <div className="flex items-center gap-4">
-                            <span className="bg-green-100 text-green-800 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                              order.status === "cancelled" || order.status === "refunded"
+                                ? "bg-brand-red text-brand-bg"
+                                : order.status === "delivered"
+                                  ? "bg-brand-mint text-brand-text"
+                                  : "bg-brand-accent/15 text-brand-text"
+                            }`}>
                               {order.status.replace(/_/g, " ")}
                             </span>
                             <span className="font-semibold text-sm">
