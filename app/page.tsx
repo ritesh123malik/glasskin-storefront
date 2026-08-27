@@ -6,6 +6,7 @@ import Header from "@/components/sections/Header";
 import Hero from "@/components/sections/Hero";
 import ProductCarousel from "@/components/sections/ProductCarousel";
 import LogoMarquee from "@/components/sections/LogoMarquee";
+import FeaturesMarquee from "@/components/ui/FeaturesMarquee";
 import BrandStory from "@/components/sections/BrandStory";
 import Testimonials from "@/components/sections/Testimonials";
 import SocialProof from "@/components/sections/SocialProof";
@@ -45,6 +46,9 @@ export default function Home() {
         <FadeInSection>
           <LogoMarquee />
         </FadeInSection>
+
+        {/* 4.5. Features Marquee */}
+        <FeaturesMarquee />
 
         {/* 5. Brand Story & Trust Badges */}
         <FadeInSection>
