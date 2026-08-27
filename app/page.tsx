@@ -11,7 +11,6 @@ import Testimonials from "@/components/sections/Testimonials";
 import SocialProof from "@/components/sections/SocialProof";
 import Footer from "@/components/sections/Footer";
 import CartDrawer from "@/components/ui/CartDrawer";
-import { CartProvider } from "@/lib/cart-context";
 
 // Elegant reusable section fade-up animation wrapper
 function FadeInSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -30,8 +29,7 @@ function FadeInSection({ children, className = "" }: { children: React.ReactNode
 
 export default function Home() {
   return (
-    <CartProvider>
-      <div className="min-h-screen flex flex-col bg-brand-bg text-brand-text overflow-x-hidden selection:bg-brand-accent/20 selection:text-brand-text">
+    <div className="min-h-screen flex flex-col bg-brand-bg text-brand-text overflow-x-hidden selection:bg-brand-accent/20 selection:text-brand-text">
         {/* 1. Sticky Header & Announcement Bar */}
         <Header />
 
@@ -68,7 +66,6 @@ export default function Home() {
 
         {/* Slide-in Cart Drawer (Activated on Header Cart click or Add to Bag) */}
         <CartDrawer />
-      </div>
-    </CartProvider>
+    </div>
   );
 }

@@ -7,40 +7,63 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholde
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-/**
- * Fetch all products from Supabase database.
- * Falls back to mock data if Supabase credentials are not configured or connection fails.
- */
+export class CatalogUnavailableError extends Error {
+  constructor() {
+    super("The product catalog is temporarily unavailable. Please try again shortly.");
+    this.name = "CatalogUnavailableError";
+  }
+}
+
+export function isCatalogUnavailableError(error: unknown): error is CatalogUnavailableError {
+  return error instanceof CatalogUnavailableError;
+}
+
+function allowsDevelopmentFixture(): boolean {
+  return process.env.NODE_ENV === "development";
+}
+
+/** Fetch all products from Supabase, using fixtures only during local development. */
 export async function getProductsFromSupabase(): Promise<Product[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return mockProductsFallback;
+    if (allowsDevelopmentFixture()) return mockProductsFallback;
+    throw new CatalogUnavailableError();
   }
 
   try {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("*, product_variants(id, title, price, is_active)")
       .order("id", { ascending: true });
 
     if (error || !data || data.length === 0) {
-      console.warn("Supabase query warning/fallback:", error?.message);
-      return mockProductsFallback;
+      console.warn("Supabase catalog query failed:", error?.message);
+      if (allowsDevelopmentFixture()) return mockProductsFallback;
+      throw new CatalogUnavailableError();
     }
 
-    return data.map((item) => ({
+    return data.map((item) => {
+      const variant = (item.product_variants ?? []).find((value: { is_active: boolean }) => value.is_active);
+      return {
       id: item.id,
       name: item.name,
       category: item.category,
-      price: item.price,
+      price: variant?.price ?? item.price,
       description: item.description,
       image: item.image,
       hoverImage: item.hover_image || item.image,
-      inStock: item.in_stock,
+      inStock: item.in_stock && Boolean(variant),
       features: item.features || [],
-    }));
+      variantId: variant?.id,
+      variantTitle: variant?.title,
+      avg_rating: item.avg_rating ?? undefined,
+      review_count: item.review_count ?? undefined,
+    };
+    });
   } catch (err) {
-    console.error("Supabase fetch error, falling back:", err);
-    return mockProductsFallback;
+    if (isCatalogUnavailableError(err)) throw err;
+    console.error("Supabase catalog fetch failed:", err);
+    if (allowsDevelopmentFixture()) return mockProductsFallback;
+    throw new CatalogUnavailableError();
   }
 }
 
@@ -52,7 +75,7 @@ export async function getProductByIdFromSupabase(id: string): Promise<Product | 
   return products.find((p) => p.id === id) || null;
 }
 
-// Internal fallback data used when Supabase env vars are not set
+// Local development fixture. It is never returned in production.
 const mockProductsFallback: Product[] = [
   {
     id: "cleanser-1",

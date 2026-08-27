@@ -20,11 +20,11 @@ export default function GlobalError({
       <div className="w-16 h-16 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-6">
         <AlertCircle size={32} />
       </div>
-      <span className="text-[10px] uppercase tracking-[0.25em] text-brand-accent font-semibold block mb-2">
+      <span className="sticker bg-brand-pink text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
         Something went wrong
       </span>
-      <h1 className="font-serif text-3xl md:text-4xl font-light tracking-wide mb-4">
-        Unable to load formulation data
+      <h1 className="heading-display text-brand-text text-4xl md:text-5xl mb-4">
+        Oops, we spilled the serum!
       </h1>
       <p className="text-xs text-brand-text/60 max-w-md leading-relaxed mb-8">
         We encountered an unexpected error while preparing your ritual experience. Please try refreshing or return to the homepage.
@@ -33,9 +33,9 @@ export default function GlobalError({
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <button
           onClick={() => reset()}
-          className="inline-flex items-center gap-2 bg-brand-accent text-brand-bg hover:bg-brand-secondary px-6 py-3 text-xs uppercase tracking-[0.2em] font-semibold rounded transition-all duration-300 shadow"
+          className="btn-play-solid bg-brand-accent px-6 py-3 text-[11px]"
         >
-          <RefreshCw size={14} />
+          <RefreshCw size={16} />
           Try Again
         </button>
         <Link

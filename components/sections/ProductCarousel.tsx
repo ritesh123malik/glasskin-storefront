@@ -59,11 +59,11 @@ export default function ProductCarousel() {
         {/* Top Header Controls */}
         <div className="flex items-end justify-between mb-12">
           <div className="text-left">
-            <span className="text-[10px] text-brand-accent uppercase tracking-[0.25em] font-semibold block mb-2">
+            <span className="sticker bg-brand-pink text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
               Signature Rituals
             </span>
-            <h2 className="text-3xl md:text-4xl font-serif font-light tracking-wide">
-              Shop by Formulation
+            <h2 className="heading-display text-brand-text text-4xl md:text-5xl">
+              Shop your <span className="text-brand-magenta">daily</span> rotation
             </h2>
           </div>
 
@@ -178,7 +178,7 @@ export default function ProductCarousel() {
                   </div>
 
                   <Link href={`/product/${product.id}`}>
-                  <h3 className="font-serif text-sm font-light tracking-wide text-brand-text group-hover:text-brand-accent transition-colors leading-relaxed mb-3">
+                  <h3 className="font-rounded text-base font-extrabold tracking-wide text-brand-text group-hover:text-brand-blue transition-colors leading-snug mb-3">
                     {product.name}
                   </h3>
                   </Link>
@@ -187,9 +187,9 @@ export default function ProductCarousel() {
                   <button 
                     disabled={!product.inStock}
                     onClick={() => product.inStock && addItem(product)}
-                    className={`mt-auto w-full py-2.5 text-[9px] uppercase tracking-[0.2em] font-semibold rounded-sm transition-all duration-300 ${
+                    className={`mt-auto w-full py-3 text-[10px] uppercase tracking-[0.15em] font-extrabold rounded-full transition-all duration-300 font-rounded ${
                       product.inStock
-                        ? "bg-brand-text text-brand-bg hover:bg-brand-accent active:scale-[0.99]"
+                        ? "bg-brand-accent text-white hover:bg-brand-magenta hover:-translate-y-0.5 shadow-play active:scale-[0.99]"
                         : "bg-brand-text/5 text-brand-text/30 cursor-not-allowed"
                     }`}
                   >
@@ -205,10 +205,10 @@ export default function ProductCarousel() {
         <div className="mt-16 flex justify-center">
           <Link
             href="/shop"
-            className="inline-flex bg-brand-accent text-brand-bg hover:bg-brand-secondary hover:-translate-y-0.5 px-10 py-4 text-xs font-semibold tracking-[0.2em] uppercase rounded transition-all duration-300 shadow-sm flex items-center gap-2 group"
+            className="btn-play-solid bg-brand-blue text-[11px] md:text-xs px-10 py-4"
           >
             Shop All Formulations
-            <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 

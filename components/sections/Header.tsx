@@ -10,11 +10,13 @@ import {
   Search, 
   User, 
   ShoppingBag, 
+  Heart,
   ChevronDown, 
   ArrowRight 
 } from "lucide-react";
 import { mockCategories } from "@/lib/products";
 import { useCart } from "@/lib/cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 import SearchModal from "@/components/ui/SearchModal";
 
 export default function Header() {
@@ -24,6 +26,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
   const { totalItems: cartCount, openCart } = useCart();
+  const { totalItems: wishlistCount } = useWishlist();
 
   // Persist announcement dismissal in sessionStorage
   useEffect(() => {
@@ -62,9 +65,9 @@ export default function Header() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="relative w-full bg-brand-accent text-brand-bg py-2.5 px-4 text-xs font-medium tracking-widest text-center uppercase flex items-center justify-center z-50 overflow-hidden"
+              className="relative w-full bg-brand-magenta text-white py-2.5 px-12 text-xs font-bold tracking-widest text-center uppercase flex items-center justify-center z-50 overflow-hidden"
             >
-              <span>Complimentary shipping on orders over ₹999 • 3 samples with every ritual</span>
+              <span className="font-rounded tracking-wide">Complimentary shipping on orders over ₹999 • 3 samples with every ritual</span>
               <button 
                 onClick={dismissAnnouncement}
                 className="absolute right-4 p-1 hover:opacity-85 transition-opacity"
@@ -78,9 +81,9 @@ export default function Header() {
 
         {/* Main Header */}
         <div
-          className={`w-full py-4 px-6 md:px-12 flex items-center justify-between transition-all duration-500 border-b ${
+          className={`w-full py-4 px-6 md:px-12 flex items-center justify-between transition-all duration-500 border-b-4 ${
             isScrolled
-              ? "bg-brand-bg/95 backdrop-blur-md border-brand-text/5 shadow-sm py-4"
+              ? "bg-brand-bg/95 backdrop-blur-md border-brand-yellow/60 shadow-sm py-4"
               : "bg-transparent border-transparent py-6"
           }`}
         >
@@ -91,11 +94,11 @@ export default function Header() {
               className="p-1.5 hover:text-brand-accent transition-colors"
               aria-label="Open menu"
             >
-              <Menu size={22} className="stroke-[1.5]" />
+              <Menu size={22} className="stroke-[2]" />
             </button>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-8 text-xs uppercase tracking-widest font-medium">
+            <nav className="hidden lg:flex items-center gap-8 text-xs uppercase tracking-widest font-extrabold font-rounded">
               <div 
                 className="relative"
                 onMouseEnter={() => setIsShopDropdownOpen(true)}
@@ -172,6 +175,9 @@ export default function Header() {
               <Link href="#about" className="hover:text-brand-accent transition-colors">
                 About
               </Link>
+              <Link href="/skin-quiz" className="hover:text-brand-accent transition-colors">
+                Skin Quiz
+              </Link>
             </nav>
           </div>
 
@@ -179,9 +185,10 @@ export default function Header() {
           <div className="flex-none text-center">
             <Link 
               href="/" 
-              className="text-2xl md:text-3xl font-serif tracking-[0.25em] font-semibold text-brand-text hover:opacity-90 transition-opacity select-none"
+              className="font-display text-lg md:text-2xl tracking-['0.08em'] uppercase text-brand-text hover:text-brand-blue transition-colors select-none"
+              style={{ WebkitTextStroke: "0px" }}
             >
-              GLASSSKIN
+              Glass<span className="text-brand-accent">Skin</span>
             </Link>
           </div>
 
@@ -201,6 +208,18 @@ export default function Header() {
             >
               <User size={20} className="stroke-[1.5]" />
             </Link>
+            <Link 
+              href="/wishlist"
+              className="p-1.5 hover:text-brand-accent transition-colors relative hidden sm:block" 
+              aria-label={`Wishlist with ${wishlistCount} items`}
+            >
+              <Heart size={20} className="stroke-[1.5]" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-brand-accent text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-play">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
             <button 
               onClick={openCart}
               className="p-1.5 hover:text-brand-accent transition-colors relative" 
@@ -208,7 +227,7 @@ export default function Header() {
             >
               <ShoppingBag size={20} className="stroke-[1.5]" />
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-brand-accent text-brand-bg text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 bg-brand-accent text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-play">
                   {cartCount}
                 </span>
               )}
@@ -244,7 +263,7 @@ export default function Header() {
               <div>
                 {/* Header inside drawer */}
                 <div className="flex items-center justify-between mb-12">
-                  <span className="font-serif text-lg tracking-[0.2em] font-semibold">GLASSSKIN</span>
+                  <span className="font-display text-lg uppercase tracking-wide">Glass<span className="text-brand-accent">Skin</span></span>
                   <button 
                     onClick={() => setIsDrawerOpen(false)}
                     className="p-1 hover:text-brand-accent transition-colors"
@@ -290,6 +309,14 @@ export default function Header() {
                   >
                     <span>Client Portal / Account</span>
                     <User size={16} className="text-brand-accent" />
+                  </Link>
+                  <Link 
+                    href="/wishlist" 
+                    onClick={() => setIsDrawerOpen(false)}
+                    className="hover:text-brand-accent transition-colors py-2 border-b border-brand-text/10 flex items-center justify-between"
+                  >
+                    <span>Wishlist</span>
+                    <Heart size={16} className="text-brand-accent" />
                   </Link>
                   <Link 
                     href="#rituals" 

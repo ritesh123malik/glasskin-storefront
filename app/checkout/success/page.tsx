@@ -1,67 +1,66 @@
-import React from "react";
 import Link from "next/link";
-import { CheckCircle2, ArrowRight, Package } from "lucide-react";
+import { ArrowRight, Clock3 } from "lucide-react";
+import { getStripe } from "@/lib/stripe";
+import { orderForStripeSession, getOrderConfirmation } from "@/lib/orders";
 
-export default function CheckoutSuccessPage({
-  searchParams,
-}: {
-  searchParams: { session_id?: string };
-}) {
-  const sessionId = searchParams.session_id ?? "";
+export const dynamic = "force-dynamic";
+
+export default async function CheckoutSuccessPage({ searchParams }: { searchParams: { session_id?: string; order?: string } }) {
+  let title = "We are confirming your payment";
+  let subtitle = "This usually takes a few moments. Refresh this page shortly; do not place the order again.";
+  let orderNumber: string | null = null;
+  let badge = "Payment Confirmation";
+
+  if (searchParams.order) {
+    const order = await getOrderConfirmation(searchParams.order);
+    if (order) {
+      orderNumber = order.order_number;
+      const confirmed = order.status !== "pending_payment";
+      badge = "Order Placed";
+      title = order.payment_method === "cash_on_delivery" ? "Cash on Delivery order placed" : "Thank you for your order";
+      subtitle =
+        order.payment_method === "cash_on_delivery"
+          ? "Please keep the exact amount ready at delivery. Our courier partner will collect payment on arrival."
+          : confirmed
+            ? "Your order is being prepared with care. A confirmation email is on its way."
+            : "We are confirming your payment. Refresh shortly; do not place the order again.";
+    }
+  } else if (searchParams.session_id) {
+    try {
+      const session = await getStripe().checkout.sessions.retrieve(searchParams.session_id);
+      if (session.metadata?.order_id) {
+        const order = await orderForStripeSession(session.id);
+        if (order) {
+          orderNumber = order.order_number;
+          const confirmed = order.status === "confirmed" || order.status === "processing" || order.status === "shipped" || order.status === "delivered";
+          badge = confirmed ? "Order Confirmed" : "Payment Confirmation";
+          title = confirmed ? "Thank you for your order" : "We are confirming your payment";
+          subtitle = confirmed
+            ? "Your order is being prepared with care. A confirmation email is on its way."
+            : "This usually takes a few moments. Refresh this page shortly; do not place the order again.";
+        }
+      }
+    } catch { /* Do not expose an order based on an arbitrary query string. */ }
+  }
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col items-center justify-center px-6 py-32">
+    <div className="min-h-screen bg-brand-bg text-brand-text flex items-center justify-center px-6 py-32">
       <div className="max-w-lg w-full text-center">
-        {/* Icon */}
         <div className="w-20 h-20 rounded-full bg-brand-accent/10 flex items-center justify-center mx-auto mb-8">
-          <CheckCircle2 size={38} className="text-brand-accent stroke-[1.25]" />
+          <Clock3 size={38} className="text-brand-accent" />
         </div>
-
-        {/* Heading */}
-        <span className="text-[10px] uppercase tracking-[0.3em] text-brand-accent font-semibold block mb-4">
-          Order Confirmed
-        </span>
-        <h1 className="font-serif text-4xl font-light tracking-wide mb-4">
-          Thank you for your order
-        </h1>
-        <p className="text-sm text-brand-text/60 leading-relaxed mb-3">
-          Your Ritual Bag is on its way to being packed with care. You&apos;ll receive a
-          confirmation email shortly.
-        </p>
-
-        {/* Order reference */}
-        {sessionId && (
-          <p className="text-[10px] text-brand-text/35 uppercase tracking-widest mb-10">
-            Reference:{" "}
-            <span className="font-mono text-brand-text/50">
-              {sessionId.slice(-12).toUpperCase()}
-            </span>
+        <span className="sticker bg-brand-mint text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">{badge}</span>
+        <h1 className="heading-display text-brand-text text-4xl md:text-6xl mb-4">{title}</h1>
+        <p className="text-sm text-brand-text/60 leading-relaxed mb-3">{subtitle}</p>
+        {orderNumber && (
+          <p className="text-[10px] text-brand-text/45 uppercase tracking-widest mb-10">
+            Order <span className="font-mono">#{orderNumber}</span>
           </p>
         )}
-
-        {/* CTA row */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-2 bg-brand-accent text-brand-bg hover:bg-brand-secondary px-8 py-3.5 text-xs uppercase tracking-[0.22em] font-semibold rounded-sm shadow-md hover:shadow-lg transition-all duration-300 group"
-          >
-            Continue Shopping
-            <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 border border-brand-text/15 text-brand-text hover:border-brand-text px-8 py-3.5 text-xs uppercase tracking-[0.22em] font-semibold rounded-sm transition-all duration-300"
-          >
-            <Package size={14} />
-            Track Order
-          </Link>
-        </div>
-
-        {/* Divider */}
-        <div className="mt-14 border-t border-brand-text/5 pt-8 text-[11px] text-brand-text/40 leading-relaxed">
-          <p>Need help? Email us at <strong className="text-brand-accent">care@glassskin.com</strong></p>
-          <p className="mt-1">© 2026 GLASSSKIN · Radiance, Ritualized.</p>
-        </div>
+        <Link href="/shop" className="btn-play-solid bg-brand-accent px-8 py-3.5 text-[11px]">
+          <span>Continue Shopping</span>
+          <ArrowRight size={14} />
+        </Link>
       </div>
     </div>
   );

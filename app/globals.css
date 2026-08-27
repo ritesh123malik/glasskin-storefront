@@ -3,15 +3,65 @@
 @tailwind utilities;
 
 :root {
-  --background: #FAF6F0;
-  --foreground: #2B2119;
-  --brand-bg: #FAF6F0;
-  --brand-text: #2B2119;
-  --brand-accent: #B8804A;
-  --brand-secondary: #D9A679;
+  /* Partake design language — warm cream base + vivid candy-bright brand colors */
+  --background: #FFF6EB;
+  --foreground: #261F1A;
+  --brand-bg: #FFF6EB;
+  --brand-text: #261F1A;
+  --brand-accent: #FF7700;
+  --brand-secondary: #FF9A3D;
+  /* Extended Partake-inspired palette */
+  --brand-blue: #00559B;
+  --brand-sky: #009EDE;
+  --brand-magenta: #BE008B;
+  --brand-red: #BC0041;
+  --brand-yellow: #FDB500;
+  --brand-citron: #FDE730;
+  --brand-peach: #FFCD78;
+  --brand-pink: #F4C0D6;
+  --brand-lilac: #E2B0D1;
+  --brand-mint: #5CCAC8;
+  --brand-cyan: #82D8E7;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+}
+
+::selection {
+  background: #FF7700;
+  color: #FFF6EB;
+}
+
+/* Playful rounded button reset */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Partake-style component recipes ───────────────────────── */
+@layer components {
+  .btn-play {
+    @apply inline-flex items-center justify-center gap-2 font-rounded font-extrabold uppercase tracking-wider rounded-full transition-all duration-300 active:translate-y-0.5;
+  }
+  .btn-play-solid {
+    @apply inline-flex items-center justify-center gap-2 font-rounded font-extrabold uppercase tracking-wider rounded-full transition-all duration-300 active:translate-y-0.5 text-brand-bg shadow-play hover:shadow-play-hover hover:-translate-y-0.5;
+  }
+  .heading-display {
+    @apply font-display uppercase leading-[0.95] tracking-display;
+  }
+  .sticker {
+    @apply inline-flex items-center justify-center font-rounded font-extrabold uppercase tracking-wide text-white rounded-full;
+  }
+}
+
+@layer utilities {
+  .text-stroke-white {
+    -webkit-text-stroke: 2px #FFF6EB;
+    color: transparent;
+  }
+  .text-stroke-ink {
+    -webkit-text-stroke: 2px #261F1A;
+    color: transparent;
+  }
 }

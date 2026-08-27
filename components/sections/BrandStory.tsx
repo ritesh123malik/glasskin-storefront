@@ -26,7 +26,7 @@ export default function BrandStory() {
   ];
 
   return (
-    <section id="brand-story" className="py-32 px-6 md:px-12 bg-brand-bg border-b border-brand-text/5 select-none">
+    <section id="brand-story" className="py-32 px-6 md:px-12 bg-brand-pink/40 border-y-4 border-brand-pink/70 select-none">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
         
         {/* Left Column: Illustrated Collage */}
@@ -86,29 +86,34 @@ export default function BrandStory() {
 
         {/* Right Column: Story Copy & Badges */}
         <div className="lg:col-span-7 flex flex-col items-start text-left order-1 lg:order-2">
-          <span className="text-[10px] text-brand-accent uppercase tracking-[0.25em] font-semibold block mb-3">
+          <span className="sticker bg-brand-mint text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
             Our Origin
           </span>
-          <h2 className="text-3xl md:text-5xl font-serif font-light tracking-wide mb-6 leading-tight">
-            Crafted for <span className="font-serif italic font-normal text-brand-accent">translucent</span> skin integrity.
+          <h2 className="heading-display text-brand-text text-4xl md:text-6xl mb-6">
+            A recipe for{" "}
+            <span className="text-brand-magenta">sweeter</span> skin
           </h2>
           
-          <p className="text-sm text-brand-text/75 font-sans font-light leading-relaxed max-w-xl mb-6 tracking-wide">
-            GLASSSKIN was founded in 2026 out of a desire to simplify the complexity of skincare. Our formulas strip away synthetic fillers, focusing exclusively on active bio-compatible botanicals and essential lipids that harmonize with your skin’s biological barrier.
+          <p className="font-rounded text-base md:text-lg text-brand-text/80 font-medium leading-relaxed max-w-xl mb-6">
+            GLASSSKIN was founded out of a desire to simplify the complexity of skincare.
+            Our formulas strip away synthetic fillers and focus on active bio-compatible
+            botanicals and essential lipids that harmonize with your skin’s barrier.
           </p>
           
-          <p className="text-sm text-brand-text/75 font-sans font-light leading-relaxed max-w-xl mb-10 tracking-wide">
-            Working directly in micro-batches with dermatologists and phytochemists, we source raw, cold-pressed rice bran, oat extracts, and copper peptides. We prioritize absolute transparency and circular, recyclable glass packaging in every product we release.
+          <p className="font-rounded text-base md:text-lg text-brand-text/80 font-medium leading-relaxed max-w-xl mb-10">
+            Working in micro-batches with dermatologists and phytochemists, we source
+            cold-pressed rice bran, oat extracts, and copper peptides — always in circular,
+            recyclable glass.
           </p>
 
           {/* Row of 4 Trust Badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 w-full py-8 border-y border-brand-text/10 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 w-full py-8 border-y-4 border-brand-text/10 mb-8">
             {badges.map((badge, index) => (
-              <div key={index} className="flex flex-col items-start gap-2.5">
+              <div key={index} className="flex flex-col items-start gap-2.5 bg-white rounded-2xl p-4 shadow-play border-4 border-white">
                 <div className="text-brand-accent">
                   {badge.icon}
                 </div>
-                <span className="text-[10px] uppercase tracking-wider font-bold text-brand-text/80 leading-snug">
+                <span className="text-[10px] uppercase tracking-wider font-extrabold text-brand-text leading-snug font-rounded">
                   {badge.label}
                 </span>
               </div>
@@ -118,18 +123,16 @@ export default function BrandStory() {
           {/* Founder Quote & Link */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 w-full">
             <div>
-              <p className="text-[11px] font-serif font-semibold italic text-brand-text/80">“Your skin barrier is a living shield—treat it with respect.”</p>
-              <p className="text-[9px] uppercase tracking-widest text-brand-text/40 font-bold mt-1">— Ritesh, Founder of GLASSSKIN</p>
+              <p className="text-sm font-rounded font-extrabold italic text-brand-text">“Your skin barrier is a living shield — treat it with respect.”</p>
+              <p className="text-[10px] uppercase tracking-widest text-brand-text/50 font-extrabold mt-1">— Ritesh, Founder of GLASSSKIN</p>
             </div>
             
             <Link
               href="#about"
-              className="relative inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-brand-accent pb-1 group"
+              className="btn-play bg-brand-sky text-white border-4 border-brand-text px-7 py-3 text-[10px]"
             >
               <span>Learn More</span>
-              <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-              {/* Animated Underline */}
-              <span className="absolute bottom-0 left-0 h-[1.5px] w-full origin-bottom-right scale-x-0 bg-brand-accent transition-transform duration-300 group-hover:origin-bottom-left group-hover:scale-x-100" />
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 

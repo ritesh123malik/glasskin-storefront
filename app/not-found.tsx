@@ -8,21 +8,21 @@ export default function NotFound() {
       <div className="w-16 h-16 rounded-full bg-brand-accent/10 text-brand-accent flex items-center justify-center mb-6">
         <Sparkles size={32} />
       </div>
-      <span className="text-[10px] uppercase tracking-[0.25em] text-brand-accent font-semibold block mb-2">
+      <span className="sticker bg-brand-yellow text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
         404 — Page Not Found
       </span>
-      <h1 className="font-serif text-3xl md:text-4xl font-light tracking-wide mb-4">
-        Formulation Uncharted
+      <h1 className="heading-display text-brand-text text-4xl md:text-6xl mb-4">
+        Formulation <span className="text-brand-magenta">uncharted</span>
       </h1>
-      <p className="text-xs text-brand-text/60 max-w-md leading-relaxed mb-8">
-        The ritual or formulation page you are seeking does not exist or has been relocated.
+      <p className="font-rounded text-sm text-brand-text/60 font-semibold max-w-md leading-snug mb-8">
+        The ritual or glow you are seeking does not exist or has been relocated.
       </p>
 
       <Link
         href="/shop"
-        className="inline-flex items-center gap-2 bg-brand-accent text-brand-bg hover:bg-brand-secondary px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-semibold rounded transition-all duration-300 shadow"
+        className="btn-play-solid bg-brand-accent px-8 py-3.5 text-[11px]"
       >
-        <ArrowLeft size={14} />
+        <ArrowLeft size={16} />
         Explore Shop
       </Link>
     </div>

@@ -83,16 +83,16 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-28 px-6 md:px-12 bg-brand-bg/30 border-b border-brand-text/5 select-none relative overflow-hidden">
+    <section className="py-28 px-6 md:px-12 bg-brand-sky/60 border-y-4 border-brand-sky select-none relative overflow-hidden">
       {/* Background soft circular accent */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-brand-accent/5 blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-white/20 blur-[100px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto text-center relative z-10 flex flex-col items-center">
-        <span className="text-[10px] text-brand-accent uppercase tracking-[0.25em] font-semibold block mb-4">
+        <span className="sticker bg-brand-yellow text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
           Reviews
         </span>
-        <h2 className="text-2xl md:text-3xl font-serif font-light tracking-wide mb-12 text-brand-text">
-          Stories of Clarity
+        <h2 className="heading-display text-brand-text text-3xl md:text-5xl mb-12">
+          Totally sweet <span className="text-brand-magenta">on us</span>
         </h2>
 
         {/* Carousel Slide Area */}
@@ -107,23 +107,23 @@ export default function Testimonials() {
               className="flex flex-col items-center"
             >
               {/* Star Rating */}
-              <div className="flex items-center gap-1 mb-6 text-brand-accent">
+              <div className="flex items-center gap-1 mb-6 text-brand-yellow">
                 {Array.from({ length: mockTestimonials[activeIndex].rating }).map((_, i) => (
-                  <Star key={i} size={15} fill="currentColor" className="stroke-[1.5]" />
+                  <Star key={i} size={18} fill="currentColor" className="stroke-[1.5] drop-shadow" />
                 ))}
               </div>
 
               {/* Quote Text */}
-              <blockquote className="font-serif italic text-lg md:text-xl lg:text-2xl font-light text-brand-text leading-relaxed max-w-2xl text-center mb-8">
+              <blockquote className="font-rounded text-lg md:text-xl lg:text-2xl font-extrabold text-brand-text leading-snug max-w-2xl mx-auto text-center mb-8">
                 “{mockTestimonials[activeIndex].quote}”
               </blockquote>
 
               {/* Author & Detail */}
               <div className="flex flex-col items-center">
-                <span className="text-xs uppercase tracking-wider font-semibold text-brand-text">
+                <span className="text-xs uppercase tracking-wider font-extrabold text-brand-text font-rounded">
                   {mockTestimonials[activeIndex].author}
                 </span>
-                <span className="text-[9px] uppercase tracking-widest text-brand-text/40 font-bold mt-1">
+                <span className="text-[10px] uppercase tracking-widest text-brand-text/60 font-extrabold mt-1">
                   {mockTestimonials[activeIndex].concern}
                 </span>
               </div>

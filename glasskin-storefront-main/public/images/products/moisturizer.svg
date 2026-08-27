@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" fill="#FAF6F0" />
+  <rect x="20" y="20" width="160" height="160" rx="4" fill="none" stroke="#2B2119" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.2"/>
+  
+  <!-- Glow -->
+  <circle cx="100" cy="115" r="45" fill="#D9A679" opacity="0.1" filter="blur(8px)" />
+  
+  <g stroke="#B8804A" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Lid -->
+    <rect x="68" y="70" width="64" height="16" rx="2" fill="#FAF6F0" />
+    <line x1="68" y1="78" x2="132" y2="78" stroke-width="0.8" />
+    
+    <!-- Jar Body -->
+    <path d="M62,88 L138,88 C141,88 143,91 143,94 L141,138 C141,146 134,152 126,152 L74,152 C66,152 59,146 59,138 L57,94 C57,91 59,88 62,88 Z" fill="#FAF6F0" stroke="#B8804A" />
+    
+    <!-- Label -->
+    <rect x="68" y="98" width="64" height="42" rx="1" stroke="#2B2119" stroke-width="0.8" />
+    <line x1="74" y1="108" x2="126" y2="108" stroke="#2B2119" stroke-width="0.8" />
+    <line x1="74" y1="116" x2="126" y2="116" stroke="#D9A679" stroke-width="0.8" />
+    <line x1="82" y1="126" x2="118" y2="126" stroke="#2B2119" stroke-width="0.5" />
+    <line x1="88" y1="132" x2="112" y2="132" stroke="#2B2119" stroke-width="0.5" />
+  </g>
+</svg>

@@ -8,6 +8,12 @@ export interface Product {
   hoverImage: string;
   inStock: boolean;
   features: string[];
+  /** The selected/default sellable variant. Product IDs are not checkout IDs. */
+  variantId?: string;
+  variantTitle?: string;
+  /** Denormalised review stats — populated by trigger after reviews are approved. */
+  avg_rating?: number;
+  review_count?: number;
 }
 
 export interface Category {

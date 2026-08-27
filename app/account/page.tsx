@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   User,
@@ -14,51 +13,32 @@ import {
 } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
-import { CartProvider } from "@/lib/cart-context";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import CartDrawer from "@/components/ui/CartDrawer";
 
-// Stub order history data
-const MOCK_ORDERS = [
-  {
-    id: "GLS-98421",
-    date: "August 18, 2026",
-    status: "Delivered",
-    total: 4398,
-    items: [
-      {
-        name: "Glass Skin Glaze Serum",
-        category: "Serums",
-        price: 2499,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=400&q=80",
-      },
-      {
-        name: "Gentle Rice Bran Cleansing Oil",
-        category: "Cleansers",
-        price: 1899,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=400&q=80",
-      },
-    ],
-  },
-  {
-    id: "GLS-74102",
-    date: "July 02, 2026",
-    status: "Delivered",
-    total: 4999,
-    items: [
-      {
-        name: "The Glass Skin Ritual Trio",
-        category: "Gift Sets",
-        price: 4999,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80",
-      },
-    ],
-  },
-];
+type OrderItem = {
+  product_name: string;
+  variant_title: string;
+  quantity: number;
+  unit_price: number;
+};
+
+type OrderShipment = {
+  status: string | null;
+  carrier: string | null;
+  tracking_number: string | null;
+};
+
+type AccountOrder = {
+  id: string;
+  order_number: number;
+  status: string;
+  grand_total: number;
+  created_at: string;
+  items: OrderItem[];
+  shipments: OrderShipment[] | null;
+};
 
 function AccountContent() {
   const [session, setSession] = useState<Session | null>(null);
@@ -67,6 +47,10 @@ function AccountContent() {
   const [authSent, setAuthSent] = useState(false);
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
+  const [orders, setOrders] = useState<AccountOrder[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [requestError, setRequestError] = useState("");
+  const [requestingId, setRequestingId] = useState<string | null>(null);
 
   useEffect(() => {
     // Fetch initial auth session
@@ -86,7 +70,59 @@ function AccountContent() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Send Magic Link using Supabase Auth
+  // Fetch the signed-in customer's real orders (RLS restricts to their own).
+  useEffect(() => {
+    if (!session) {
+      setOrders([]);
+      return;
+    }
+    let active = true;
+    setOrdersLoading(true);
+    (async () => {
+      const { data } = await supabase
+        .from("orders")
+        .select("id, order_number, status, grand_total, created_at, items:order_items(product_name, variant_title, quantity, unit_price), shipments(status, carrier, tracking_number)")
+        .order("created_at", { ascending: false });
+      if (active) setOrders((data as unknown as AccountOrder[]) ?? []);
+      if (active) setOrdersLoading(false);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [session]);
+
+  async function handleRequest(orderId: string, type: "cancel" | "return") {
+    setRequestError("");
+    setRequestingId(orderId);
+    try {
+      const res = await fetch(`/api/account/orders/${orderId}/request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type,
+          reason: type === "cancel" ? "Requested cancellation from account page." : "Requested return from account page.",
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setRequestError(data.error ?? "Request failed.");
+      } else {
+        setOrders((prev) =>
+          prev.map((order) =>
+            order.id === orderId
+              ? { ...order, status: type === "cancel" ? "cancelled" : order.status }
+              : order
+          )
+        );
+      }
+    } catch {
+      setRequestError("Network error. Please try again.");
+    } finally {
+      setRequestingId(null);
+    }
+  }
+
+  // Send Magic Link using Supabase Auth (server-validated + rate-limited route)
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
@@ -95,21 +131,19 @@ function AccountContent() {
     setAuthError("");
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
-        options: {
-          emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/account` : undefined,
-        },
+      const res = await fetch("/api/auth/magic-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
       });
-
-      if (error) {
-        setAuthError(error.message);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setAuthError(data.error ?? "Could not send login link.");
       } else {
         setAuthSent(true);
       }
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "An error occurred while sending login link.";
-      setAuthError(errorMsg);
+    } catch {
+      setAuthError("An error occurred while sending login link.");
     } finally {
       setAuthLoading(false);
     }
@@ -140,11 +174,11 @@ function AccountContent() {
               <div className="w-16 h-16 rounded-full bg-brand-accent/10 flex items-center justify-center mx-auto mb-4 text-brand-accent">
                 <User size={30} className="stroke-[1.5]" />
               </div>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-brand-accent font-semibold block mb-2">
+              <span className="sticker bg-brand-sky text-white text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
                 Client Portal
               </span>
-              <h1 className="font-serif text-3xl font-light tracking-wide mb-2">
-                Sign In to GLASSSKIN
+              <h1 className="heading-display text-brand-text text-3xl md:text-5xl mb-2">
+                Welcome to the <span className="text-brand-magenta">glow club</span>
               </h1>
               <p className="text-xs text-brand-text/60 leading-relaxed">
                 Enter your email address to receive a secure, passwordless magic link to access your order history and skin profile.
@@ -161,7 +195,7 @@ function AccountContent() {
                   <div className="w-12 h-12 rounded-full bg-green-100 text-green-700 flex items-center justify-center mx-auto">
                     <Mail size={22} />
                   </div>
-                  <h3 className="font-serif text-xl font-medium">Check your inbox</h3>
+                  <h3 className="font-rounded text-xl font-extrabold">Check your inbox</h3>
                   <p className="text-xs text-brand-text/70 leading-relaxed">
                     We sent a magic login link to <strong className="text-brand-text font-semibold">{email}</strong>. Click the link in your email to instantly sign in.
                   </p>
@@ -229,10 +263,10 @@ function AccountContent() {
             {/* User Header Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-text/10 pb-8 gap-4">
               <div>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-brand-accent font-semibold block mb-1">
+                <span className="sticker bg-brand-mint text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
                   Welcome Back
                 </span>
-                <h1 className="font-serif text-3xl font-light tracking-wide">
+                <h1 className="heading-display text-brand-text text-3xl">
                   {session.user.email}
                 </h1>
                 <p className="text-xs text-brand-text/50 mt-1">
@@ -251,36 +285,38 @@ function AccountContent() {
 
             {/* Dashboard Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-brand-text/5 border border-brand-text/10 rounded-xl p-6">
-                <span className="text-[10px] uppercase tracking-widest text-brand-accent font-semibold block mb-2">
+              <div className="bg-white border-4 border-brand-yellow rounded-3xl p-6 shadow-play">
+                <span className="sticker bg-brand-yellow text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-3 inline-flex shadow-play">
                   Membership Tier
                 </span>
                 <div className="flex items-center gap-2">
                   <Sparkles size={18} className="text-brand-accent" />
-                  <h3 className="font-serif text-xl">De Luxe Society</h3>
+                  <h3 className="font-rounded text-xl font-extrabold">De Luxe Society</h3>
                 </div>
-                <p className="text-xs text-brand-text/60 mt-2 leading-relaxed">
-                  Enjoy complimentary express shipping and early access to new formulation drops.
+                <p className="font-rounded text-sm text-brand-text/60 font-semibold mt-2 leading-snug">
+                  Enjoy complimentary express shipping and early access to new glow drops.
                 </p>
               </div>
 
-              <div className="bg-brand-text/5 border border-brand-text/10 rounded-xl p-6">
-                <span className="text-[10px] uppercase tracking-widest text-brand-accent font-semibold block mb-2">
+              <div className="bg-white border-4 border-brand-sky rounded-3xl p-6 shadow-play">
+                <span className="sticker bg-brand-sky text-white text-[10px] px-4 py-1 -rotate-2 mb-3 inline-flex shadow-play">
                   Total Orders
                 </span>
-                <h3 className="font-serif text-3xl">{MOCK_ORDERS.length}</h3>
-                <p className="text-xs text-brand-text/60 mt-2">
-                  Last order placed on August 18, 2026
+                <h3 className="font-display text-4xl">{orders.length}</h3>
+                <p className="font-rounded text-sm text-brand-text/60 font-semibold mt-2">
+                  {orders.length > 0
+                    ? `Last order on ${new Date(orders[0].created_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}`
+                    : "No orders yet"}
                 </p>
               </div>
 
-              <div className="bg-brand-text/5 border border-brand-text/10 rounded-xl p-6">
-                <span className="text-[10px] uppercase tracking-widest text-brand-accent font-semibold block mb-2">
+              <div className="bg-white border-4 border-brand-pink rounded-3xl p-6 shadow-play">
+                <span className="sticker bg-brand-magenta text-white text-[10px] px-4 py-1 -rotate-2 mb-3 inline-flex shadow-play">
                   Skin Concierge
                 </span>
-                <h3 className="font-serif text-xl">Active Care</h3>
-                <p className="text-xs text-brand-text/60 mt-2">
-                  Concierge available 24/7 at <strong className="text-brand-text font-medium">care@glassskin.com</strong>
+                <h3 className="font-rounded text-xl font-extrabold">Active Care</h3>
+                <p className="font-rounded text-sm text-brand-text/60 font-semibold mt-2">
+                  Concierge available 24/7 at <strong className="text-brand-text font-bold">care@glassskin.com</strong>
                 </p>
               </div>
             </div>
@@ -289,56 +325,98 @@ function AccountContent() {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="font-serif text-2xl font-light tracking-wide">Order History</h2>
+                  <h2 className="heading-display text-brand-text text-2xl md:text-3xl">Your Orders</h2>
                   <p className="text-xs text-brand-text/50">View your past purchases and shipment statuses.</p>
                 </div>
                 <Package size={20} className="text-brand-accent" />
               </div>
 
               <div className="space-y-6">
-                {MOCK_ORDERS.map((order) => (
-                  <div
-                    key={order.id}
-                    className="bg-brand-text/5 border border-brand-text/10 rounded-xl p-6 space-y-4"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-text/10 pb-4 gap-2 text-xs">
-                      <div>
-                        <span className="font-bold tracking-wider">{order.id}</span>
-                        <span className="text-brand-text/40 mx-2">•</span>
-                        <span className="text-brand-text/60">{order.date}</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className="bg-green-100 text-green-800 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                          {order.status}
-                        </span>
-                        <span className="font-semibold text-sm">
-                          ₹{order.total.toLocaleString("en-IN")}
-                        </span>
-                      </div>
-                    </div>
+                {ordersLoading ? (
+                  <div className="bg-brand-text/5 border border-brand-text/10 rounded-xl p-6 text-xs text-brand-text/50">
+                    Loading your orders…
+                  </div>
+                ) : orders.length === 0 ? (
+                  <div className="bg-brand-text/5 border border-brand-text/10 rounded-xl p-6 text-xs text-brand-text/50">
+                    You haven&apos;t placed any orders yet.
+                  </div>
+                ) : (
+                  orders.map((order) => {
+                    const shipment = order.shipments?.[0];
+                    const canRequest =
+                      order.status === "confirmed" ||
+                      order.status === "processing" ||
+                      order.status === "shipped";
+                    return (
+                      <div
+                        key={order.id}
+                        className="bg-brand-text/5 border border-brand-text/10 rounded-xl p-6 space-y-4"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-text/10 pb-4 gap-2 text-xs">
+                          <div>
+                            <span className="font-bold tracking-wider">#{order.order_number}</span>
+                            <span className="text-brand-text/40 mx-2">•</span>
+                            <span className="text-brand-text/60">
+                              {new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="bg-green-100 text-green-800 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                              {order.status.replace(/_/g, " ")}
+                            </span>
+                            <span className="font-semibold text-sm">
+                              ₹{order.grand_total.toLocaleString("en-IN")}
+                            </span>
+                          </div>
+                        </div>
 
-                    <div className="divide-y divide-brand-text/5">
-                      {order.items.map((item, idx) => (
-                        <div key={idx} className="py-3 flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-3">
-                            <div className="relative aspect-square w-12 rounded overflow-hidden bg-brand-text/5 shrink-0">
-                              <Image src={item.image} alt={item.name} fill sizes="48px" className="object-cover" />
-                            </div>
-                            <div>
-                              <h4 className="font-serif text-sm font-light text-brand-text">{item.name}</h4>
-                              <span className="text-[10px] text-brand-text/50 uppercase tracking-wider">
-                                Qty: {item.quantity}
+                        <div className="divide-y divide-brand-text/5">
+                          {order.items.map((item, idx) => (
+                            <div key={idx} className="py-3 flex items-center justify-between gap-4">
+                              <div className="min-w-0">
+                                <h4 className="font-rounded text-sm font-extrabold text-brand-text">{item.product_name}</h4>
+                                <span className="text-[10px] text-brand-text/50 uppercase tracking-wider">
+                                  {item.variant_title} · Qty: {item.quantity}
+                                </span>
+                              </div>
+                              <span className="text-xs font-semibold">
+                                ₹{item.unit_price.toLocaleString("en-IN")}
                               </span>
                             </div>
-                          </div>
-                          <span className="text-xs font-semibold">
-                            ₹{item.price.toLocaleString("en-IN")}
-                          </span>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+
+                        {shipment?.tracking_number && (
+                          <p className="text-[11px] text-brand-text/60">
+                            {shipment.carrier}: <span className="font-mono">{shipment.tracking_number}</span> ({shipment.status})
+                          </p>
+                        )}
+
+                        {canRequest && (
+                          <div className="flex items-center gap-3 pt-1">
+                            <button
+                              onClick={() => handleRequest(order.id, "return")}
+                              disabled={requestingId === order.id}
+                              className="text-[10px] uppercase tracking-widest font-semibold border border-brand-text/20 hover:border-brand-accent px-3 py-2 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                              Request Return
+                            </button>
+                            <button
+                              onClick={() => handleRequest(order.id, "cancel")}
+                              disabled={requestingId === order.id}
+                              className="text-[10px] uppercase tracking-widest font-semibold border border-brand-text/20 hover:border-red-500 hover:text-red-500 px-3 py-2 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                              Cancel Order
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+                {requestError && (
+                  <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-3">{requestError}</p>
+                )}
               </div>
             </div>
           </div>
@@ -350,13 +428,11 @@ function AccountContent() {
 
 export default function AccountPage() {
   return (
-    <CartProvider>
-      <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
+    <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
         <Header />
         <AccountContent />
         <Footer />
         <CartDrawer />
-      </div>
-    </CartProvider>
+    </div>
   );
 }

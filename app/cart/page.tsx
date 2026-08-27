@@ -17,7 +17,7 @@ import {
   RotateCcw,
   ChevronLeft,
 } from "lucide-react";
-import { CartProvider, useCart, FREE_SHIPPING_THRESHOLD } from "@/lib/cart-context";
+import { useCart, FREE_SHIPPING_THRESHOLD } from "@/lib/cart-context";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import CartDrawer from "@/components/ui/CartDrawer";
@@ -32,7 +32,6 @@ const TRUST = [
 // ─── Promo banner hints (shown below the input, never exposing server codes) ──
 const PROMO_HINT = "Have a code? Enter it below.";
 
-// ─── Inner component (needs CartProvider in scope) ────────────────────────────
 function CartPageInner() {
   const { items, updateQuantity, removeItem, subtotal, totalItems } = useCart();
 
@@ -43,6 +42,12 @@ function CartPageInner() {
   const [promoLoading, setPromoLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+
+  // Cash on Delivery
+  const [codOpen, setCodOpen] = useState(false);
+  const [codLoading, setCodLoading] = useState(false);
+  const [codError, setCodError] = useState("");
+  const [cod, setCod] = useState({ name: "", email: "", phone: "", line1: "", line2: "", city: "", state: "", pincode: "" });
 
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 99;
   const freeShippingProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
@@ -62,29 +67,23 @@ function CartPageInner() {
     setPromoStatus({ state: "idle" });
 
     try {
-      // Client-side preview only — the real authoritative validation happens
-      // server-side in /api/checkout-session at checkout time.
-      // These codes must match lib/promos.ts exactly.
-      const known: Record<string, { percentOff: number; description: string; minSubtotal?: number }> = {
-        WELCOME10: { percentOff: 10, description: "10% off your first order" },
-        GLOW15: { percentOff: 15, description: "15% off orders above ₹2,000", minSubtotal: 2000 },
-        RITUAL20: { percentOff: 20, description: "20% off gift sets", minSubtotal: 4000 },
-      };
-
-      const promo = known[promoInput.trim().toUpperCase()];
-      if (!promo) {
-        setPromoStatus({ state: "invalid", message: "That code doesn't exist. Try WELCOME10." });
-      } else if (promo.minSubtotal && subtotal < promo.minSubtotal) {
-        setPromoStatus({
-          state: "invalid",
-          message: `This code needs a ₹${promo.minSubtotal.toLocaleString("en-IN")} minimum order.`,
-        });
+      const itemsPayload = items
+        .filter((i) => i.product.variantId)
+        .map((i) => ({ variantId: i.product.variantId as string, quantity: i.quantity }));
+      if (itemsPayload.length === 0) {
+        setPromoStatus({ state: "invalid", message: "Add a product before applying a code." });
+        return;
+      }
+      const res = await fetch("/api/promo/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoInput.trim(), items: itemsPayload }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.valid) {
+        setPromoStatus({ state: "invalid", message: data.message ?? "That code can't be applied." });
       } else {
-        setPromoStatus({
-          state: "valid",
-          discount: promo.percentOff,
-          label: promo.description,
-        });
+        setPromoStatus({ state: "valid", discount: data.percent, label: data.label });
       }
     } finally {
       setPromoLoading(false);
@@ -100,7 +99,7 @@ function CartPageInner() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+          items: items.map((i) => ({ variantId: i.product.variantId, quantity: i.quantity })),
           promoCode: promoStatus.state === "valid" ? promoInput.trim() : undefined,
         }),
       });
@@ -119,25 +118,62 @@ function CartPageInner() {
     }
   }
 
+  // ─── Cash on Delivery ────────────────────────────────────────────────────────
+  async function handleCodCheckout() {
+    if (!cod.name.trim() || !cod.email.trim() || !cod.phone.trim() || !cod.line1.trim() || !cod.city.trim() || !cod.state.trim() || !cod.pincode.trim()) {
+      setCodError("Please complete all delivery details.");
+      return;
+    }
+    setCodLoading(true);
+    setCodError("");
+    try {
+      const itemsPayload = items
+        .filter((i) => i.product.variantId)
+        .map((i) => ({ variantId: i.product.variantId as string, quantity: i.quantity }));
+      const res = await fetch("/api/checkout/cod", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: itemsPayload,
+          promoCode: promoStatus.state === "valid" ? promoInput.trim() : undefined,
+          email: cod.email,
+          name: cod.name,
+          phone: cod.phone,
+          address: { line1: cod.line1, line2: cod.line2, city: cod.city, state: cod.state, pincode: cod.pincode },
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setCodError(data.error ?? "Could not place your order.");
+        return;
+      }
+      window.location.href = `/checkout/success?order=${data.orderNumber}`;
+    } catch {
+      setCodError("Network error. Please try again.");
+    } finally {
+      setCodLoading(false);
+    }
+  }
+
   // ─── Empty state ─────────────────────────────────────────────────────────────
   if (items.length === 0) {
     return (
       <main className="min-h-screen bg-brand-bg text-brand-text pt-24 pb-32 flex flex-col items-center justify-center px-6">
-        <div className="w-24 h-24 rounded-full bg-brand-accent/10 flex items-center justify-center mb-8">
-          <ShoppingBag size={38} className="text-brand-accent stroke-[1.25]" />
+        <div className="w-24 h-24 rounded-full bg-brand-yellow flex items-center justify-center mb-8 shadow-play">
+          <ShoppingBag size={38} className="text-brand-text stroke-[2]" />
         </div>
-        <h1 className="font-serif text-3xl font-light tracking-wide mb-3 text-center">
-          Your bag is empty
+        <h1 className="heading-display text-brand-text text-4xl mb-3 text-center">
+          Your bag is empty!
         </h1>
-        <p className="text-sm text-brand-text/60 max-w-xs text-center leading-relaxed mb-10">
-          Nurture your skin barrier with our handcrafted botanicals and bio-compatible peptide formulas.
+        <p className="font-rounded text-sm text-brand-text/60 font-semibold max-w-xs text-center leading-snug mb-10">
+          Fill it with delicious, feel-good formulas your skin barrier will love.
         </p>
         <Link
           href="/shop"
-          className="inline-flex items-center gap-2 bg-brand-accent text-brand-bg hover:bg-brand-secondary px-10 py-4 text-xs uppercase tracking-[0.22em] font-semibold rounded shadow-md hover:shadow-lg transition-all duration-300 group"
+          className="btn-play-solid bg-brand-accent px-10 py-4 text-[11px]"
         >
           Continue Shopping
-          <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </main>
     );
@@ -156,8 +192,8 @@ function CartPageInner() {
             <ChevronLeft size={12} className="group-hover:-translate-x-0.5 transition-transform" />
             Continue Shopping
           </Link>
-          <h1 className="font-serif text-4xl md:text-5xl font-light tracking-wide">
-            Your Ritual Bag
+          <h1 className="heading-display text-brand-text text-4xl md:text-6xl">
+            Your Glow Bag
           </h1>
           <p className="text-sm text-brand-text/50 mt-1.5">
             {totalItems} {totalItems === 1 ? "item" : "items"}
@@ -239,7 +275,7 @@ function CartPageInner() {
                           {item.product.category}
                         </span>
                         <Link href={`/product/${item.product.id}`}>
-                          <h2 className="font-serif text-base font-light text-brand-text leading-snug hover:text-brand-accent transition-colors">
+                          <h2 className="font-rounded text-base font-extrabold text-brand-text leading-snug hover:text-brand-blue transition-colors">
                             {item.product.name}
                           </h2>
                         </Link>
@@ -333,7 +369,7 @@ function CartPageInner() {
                   <button
                     onClick={handleApplyPromo}
                     disabled={promoLoading || !promoInput.trim()}
-                    className="px-4 py-2.5 text-[10px] uppercase tracking-widest font-semibold bg-brand-text text-brand-bg rounded-sm hover:bg-brand-accent transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+                    className="px-4 py-2.5 text-[10px] uppercase tracking-widest font-extrabold font-rounded bg-brand-text text-brand-bg rounded-full hover:bg-brand-accent transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
                   >
                     {promoLoading ? "..." : "Apply"}
                   </button>
@@ -445,6 +481,42 @@ function CartPageInner() {
                 )}
               </button>
 
+              {/* Cash on Delivery */}
+              {process.env.NEXT_PUBLIC_COD_ENABLED !== "false" && (
+              <div className="pt-1">
+                {!codOpen ? (
+                  <button
+                    onClick={() => setCodOpen(true)}
+                    className="w-full border border-brand-text/20 text-brand-text py-3.5 rounded-sm text-[11px] uppercase tracking-[0.2em] font-semibold hover:border-brand-accent hover:text-brand-accent transition-colors"
+                  >
+                    Pay by Cash on Delivery
+                  </button>
+                ) : (
+                  <div className="space-y-3 border border-brand-text/15 rounded-sm p-4">
+                    <p className="text-[10px] uppercase tracking-widest font-semibold text-brand-text/50">Cash on Delivery</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input value={cod.name} onChange={(e) => setCod({ ...cod, name: e.target.value })} placeholder="Full name" className="col-span-2 border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.email} onChange={(e) => setCod({ ...cod, email: e.target.value })} placeholder="Email" className="border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.phone} onChange={(e) => setCod({ ...cod, phone: e.target.value })} placeholder="Phone" className="border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.line1} onChange={(e) => setCod({ ...cod, line1: e.target.value })} placeholder="Address line 1" className="col-span-2 border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.line2} onChange={(e) => setCod({ ...cod, line2: e.target.value })} placeholder="Address line 2 (optional)" className="col-span-2 border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.city} onChange={(e) => setCod({ ...cod, city: e.target.value })} placeholder="City" className="border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.state} onChange={(e) => setCod({ ...cod, state: e.target.value })} placeholder="State" className="border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                      <input value={cod.pincode} onChange={(e) => setCod({ ...cod, pincode: e.target.value })} placeholder="Pincode" className="col-span-2 border border-brand-text/15 rounded-sm px-3 py-2 text-xs bg-transparent focus:outline-none focus:border-brand-accent" />
+                    </div>
+                    {codError && <p className="text-xs text-red-600">{codError}</p>}
+                    <button
+                      onClick={handleCodCheckout}
+                      disabled={codLoading}
+                      className="w-full btn-play-solid bg-brand-accent py-3.5 rounded-full text-[11px] hover:bg-brand-magenta disabled:opacity-60 disabled:cursor-wait"
+                    >
+                      {codLoading ? "Placing order…" : "Place COD Order"}
+                    </button>
+                  </div>
+                )}
+              </div>
+              )}
+
               {/* Trust row */}
               <div className="flex flex-wrap items-center justify-center gap-4 pt-1">
                 {TRUST.map(({ icon: Icon, label }) => (
@@ -470,13 +542,11 @@ function CartPageInner() {
 // ─── Page export ──────────────────────────────────────────────────────────────
 export default function CartPage() {
   return (
-    <CartProvider>
-      <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
+    <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
         <Header />
         <CartPageInner />
         <Footer />
         <CartDrawer />
-      </div>
-    </CartProvider>
+    </div>
   );
 }

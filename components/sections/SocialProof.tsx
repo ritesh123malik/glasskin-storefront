@@ -33,7 +33,7 @@ const marqueePhotos = [...socialPhotos, ...socialPhotos, ...socialPhotos];
 
 export default function SocialProof() {
   return (
-    <section className="py-20 bg-brand-bg border-b border-brand-text/5 overflow-hidden">
+    <section className="py-20 bg-brand-citron/40 border-y-4 border-brand-yellow/70 overflow-hidden">
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes social-scroll {
           0%   { transform: translateX(0); }
@@ -51,27 +51,27 @@ export default function SocialProof() {
       {/* Header */}
       <div className="max-w-6xl mx-auto px-6 mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <span className="text-[10px] text-brand-accent uppercase tracking-[0.25em] font-semibold block mb-2">
+          <span className="sticker bg-brand-accent text-white text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
             Community
           </span>
-          <h2 className="text-2xl md:text-3xl font-serif font-light tracking-wide text-brand-text">
+          <h2 className="heading-display text-brand-text text-3xl md:text-4xl">
             Tag{" "}
             <Link
               href="https://instagram.com/glassskin"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-brand-accent hover:text-brand-secondary transition-colors duration-200"
+              className="text-brand-magenta hover:text-brand-blue transition-colors duration-200"
             >
               @glassskin
             </Link>
-            {" "}For A Feature
+            {" "}<span className="text-brand-blue">For A Feature</span>
           </h2>
         </div>
         <Link
           href="https://instagram.com/glassskin"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 self-start sm:self-auto border border-brand-text/15 hover:border-brand-accent text-brand-text hover:text-brand-accent px-5 py-2.5 rounded text-[10px] uppercase tracking-widest font-semibold transition-all duration-300"
+          className="btn-play bg-white text-brand-text border-4 border-brand-text px-6 py-3 text-[10px] self-start sm:self-auto"
         >
           <InstagramIcon size={14} />
           Follow Us

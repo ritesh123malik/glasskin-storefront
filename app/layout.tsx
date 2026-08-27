@@ -1,20 +1,33 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Nunito, Playfair_Display, Archivo_Black, Baloo_2 } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
+import CookieConsent from "@/components/ui/CookieConsent";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
 });
 
-const inter = Inter({
+const nunito = Nunito({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-nunito",
+});
+
+const archivo = Archivo_Black({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-archivo",
+});
+
+const baloo = Baloo_2({
+  subsets: ["latin"],
+  variable: "--font-baloo",
 });
 
 export const metadata: Metadata = {
-  title: "GLASSSKIN | Editorial Luxury Skincare Storefront",
-  description: "A warm, high-end editorial storefront featuring premium skincare cleansers, serums, moisturizers, SPF, and gift sets.",
+  title: "GLASSSKIN | Super Delicious Skincare",
+  description: "A playful, feel-good skincare storefront featuring cleansers, serums, moisturizers, SPF, and gift sets. Real science, deliciously simple.",
 };
 
 export default function RootLayout({
@@ -23,9 +36,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${nunito.variable} ${archivo.variable} ${baloo.variable}`}>
       <body className="font-sans antialiased text-brand-text bg-brand-bg">
-        {children}
+        <Providers>{children}</Providers>
+        <CookieConsent />
       </body>
     </html>
   );

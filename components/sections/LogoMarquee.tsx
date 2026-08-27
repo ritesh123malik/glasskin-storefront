@@ -58,7 +58,7 @@ export default function LogoMarquee() {
   const marqueeLogos = [...logos, ...logos, ...logos];
 
   return (
-    <section className="py-16 bg-brand-bg/50 border-b border-brand-text/5 select-none overflow-hidden">
+    <section className="py-16 bg-brand-yellow/30 border-y-4 border-brand-yellow/70 select-none overflow-hidden">
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes logo-marquee {
           0% { transform: translateX(0); }
@@ -73,19 +73,19 @@ export default function LogoMarquee() {
       `}} />
       
       <div className="max-w-6xl mx-auto px-6 mb-10 text-center">
-        <span className="text-[10px] text-brand-accent uppercase tracking-[0.3em] font-semibold block mb-2">
+        <span className="sticker bg-brand-text text-white text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
           Press Mentions
         </span>
-        <h2 className="font-serif text-sm md:text-base italic font-light tracking-widest text-brand-text/60">
-          Loved by 10,000+ Glass Skin Devotees & As Seen In
+        <h2 className="heading-display text-brand-text text-2xl md:text-3xl">
+          Loved by 10,000+ Glow Devotees &amp; As Seen In
         </h2>
       </div>
 
       {/* Marquee Track Container */}
       <div className="w-full flex items-center relative py-4">
         {/* Soft fading edges overlay */}
-        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-brand-bg to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-brand-bg to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FFF3D6] to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#FFF3D6] to-transparent z-10 pointer-events-none" />
         
         <div className="flex w-full overflow-hidden">
           <div className="animate-logo-marquee flex items-center gap-16 md:gap-24 w-max">

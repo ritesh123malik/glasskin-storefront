@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal, X, ShoppingBag } from "lucide-react";
 import { mockCategories, Product } from "@/lib/products";
-import { CartProvider, useCart } from "@/lib/cart-context";
+import { useCart } from "@/lib/cart-context";
 import CartDrawer from "@/components/ui/CartDrawer";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
@@ -66,13 +66,13 @@ function ProductCard({ product }: { product: Product }) {
           <span className="text-xs font-semibold text-brand-text">₹{product.price.toLocaleString("en-IN")}</span>
         </div>
         <Link href={`/product/${product.id}`}>
-          <h3 className="font-serif text-sm font-light tracking-wide text-brand-text hover:text-brand-accent transition-colors leading-relaxed mb-3">
+          <h3 className="font-rounded text-base font-extrabold tracking-wide text-brand-text hover:text-brand-blue transition-colors leading-snug mb-3">
             {product.name}
           </h3>
         </Link>
         <div className="flex flex-wrap gap-1.5 mb-4">
           {product.features.slice(0, 2).map((f) => (
-            <span key={f} className="text-[8px] uppercase tracking-wider text-brand-accent/80 border border-brand-accent/20 px-2 py-0.5 rounded-sm font-medium">
+            <span key={f} className="text-[8px] uppercase tracking-wider text-brand-text/70 bg-brand-pink/60 border-2 border-brand-text/10 px-2 py-0.5 rounded-full font-extrabold font-rounded">
               {f}
             </span>
           ))}
@@ -80,12 +80,12 @@ function ProductCard({ product }: { product: Product }) {
         <button
           disabled={!product.inStock}
           onClick={handleAdd}
-          className={`mt-auto w-full py-2.5 text-[9px] uppercase tracking-[0.2em] font-semibold rounded-sm transition-all duration-300 ${
+          className={`mt-auto w-full py-3 text-[10px] uppercase tracking-[0.15em] font-extrabold font-rounded rounded-full transition-all duration-300 ${
             !product.inStock
               ? "bg-brand-text/5 text-brand-text/30 cursor-not-allowed"
               : added
-              ? "bg-brand-accent text-brand-bg scale-[0.98]"
-              : "bg-brand-text text-brand-bg hover:bg-brand-accent active:scale-[0.99]"
+              ? "bg-brand-magenta text-white scale-[0.98]"
+              : "bg-brand-accent text-white hover:bg-brand-magenta hover:-translate-y-0.5 shadow-play active:scale-[0.99]"
           }`}
         >
           {!product.inStock ? "Sold Out" : added ? "✓ Added to Bag" : "Add to Bag"}
@@ -151,9 +151,9 @@ function ShopContent({ products }: { products: Product[] }) {
     <main className="min-h-screen bg-brand-bg text-brand-text pt-24 pb-32">
       <div className="border-b border-brand-text/5 py-14 px-6 md:px-12">
         <div className="max-w-6xl mx-auto">
-          <span className="text-[10px] text-brand-accent uppercase tracking-[0.25em] font-semibold block mb-3">The Edit</span>
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light tracking-wide mb-4">Shop All Formulations</h1>
-          <p className="text-sm text-brand-text/60 max-w-md leading-relaxed">Each formula is a study in restraint — only what your skin needs, nothing it doesn&apos;t.</p>
+          <span className="sticker bg-brand-yellow text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">The Edit</span>
+          <h1 className="heading-display text-brand-text text-5xl md:text-7xl mb-4">Shop the <span className="text-brand-accent">good stuff</span></h1>
+          <p className="font-rounded text-base md:text-lg text-brand-text/70 font-semibold max-w-lg leading-snug">Each formula is a study in restraint — only what your skin needs, nothing it doesn&apos;t. All the tasty, none of the FOMO.</p>
         </div>
       </div>
 
@@ -213,9 +213,9 @@ function ShopContent({ products }: { products: Product[] }) {
             <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="flex flex-col items-center justify-center py-32 gap-4">
               <ShoppingBag size={36} className="text-brand-text/20" />
-              <p className="text-sm text-brand-text/40 uppercase tracking-widest">No products in this category</p>
+              <p className="text-sm text-brand-text/40 uppercase tracking-widest font-extrabold font-rounded">No products in this category yet</p>
               <button onClick={() => handleFilterChange("all")}
-                className="text-[10px] uppercase tracking-widest font-semibold border border-brand-text/20 rounded-full px-5 py-2 hover:border-brand-text transition-colors mt-2">
+                className="btn-play bg-white border-4 border-brand-text text-brand-text px-5 py-2 text-[10px] mt-2 hover:bg-brand-yellow">
                 View All
               </button>
             </motion.div>
@@ -237,17 +237,32 @@ function ShopContent({ products }: { products: Product[] }) {
   );
 }
 
-export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
-  return (
-    <CartProvider>
+export default function ShopClient({ initialProducts, catalogError }: { initialProducts: Product[]; catalogError?: string }) {
+  if (catalogError) {
+    return (
       <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
+        <Header />
+        <main className="min-h-[70vh] flex items-center justify-center px-6 text-center">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.25em] text-brand-accent font-semibold mb-3">Catalog unavailable</p>
+            <h1 className="heading-display text-brand-text text-3xl mb-4">We could not load the shop</h1>
+            <p className="text-sm text-brand-text/60 max-w-md">{catalogError}</p>
+          </div>
+        </main>
+        <Footer />
+        <CartDrawer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
         <Header />
         <Suspense fallback={<div className="min-h-[80vh]" />}>
           <ShopContent products={initialProducts} />
         </Suspense>
         <Footer />
         <CartDrawer />
-      </div>
-    </CartProvider>
+    </div>
   );
 }

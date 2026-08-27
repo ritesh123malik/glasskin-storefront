@@ -162,7 +162,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                           <span className="text-[9px] uppercase tracking-wider text-brand-accent font-semibold block">
                             {product.category}
                           </span>
-                          <h4 className="text-xs font-serif font-light text-brand-text group-hover:text-brand-accent transition-colors truncate">
+                          <h4 className="text-xs font-rounded font-extrabold text-brand-text group-hover:text-brand-blue transition-colors truncate">
                             {product.name}
                           </h4>
                           <span className="text-[11px] font-semibold text-brand-text/60">
@@ -210,7 +210,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                           <span className="text-[9px] uppercase tracking-wider text-brand-accent font-semibold block">
                             {product.category}
                           </span>
-                          <h4 className="text-xs font-serif font-light text-brand-text group-hover:text-brand-accent transition-colors truncate">
+                          <h4 className="text-xs font-rounded font-extrabold text-brand-text group-hover:text-brand-blue transition-colors truncate">
                             {product.name}
                           </h4>
                           <p className="text-[10px] text-brand-text/50 truncate">

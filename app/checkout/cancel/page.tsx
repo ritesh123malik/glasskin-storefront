@@ -11,11 +11,11 @@ export default function CheckoutCancelPage() {
           <XCircle size={38} className="text-brand-text/30 stroke-[1.25]" />
         </div>
 
-        <span className="text-[10px] uppercase tracking-[0.3em] text-brand-text/40 font-semibold block mb-4">
+        <span className="sticker bg-brand-yellow text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
           Payment Cancelled
         </span>
-        <h1 className="font-serif text-4xl font-light tracking-wide mb-4">
-          No worries — your bag is saved
+        <h1 className="heading-display text-brand-text text-4xl md:text-6xl mb-4">
+          No worries — Your bag is saved
         </h1>
         <p className="text-sm text-brand-text/60 leading-relaxed mb-10">
           Your items are still in your bag. Return whenever you&apos;re ready to complete
@@ -25,7 +25,7 @@ export default function CheckoutCancelPage() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/cart"
-            className="inline-flex items-center gap-2 bg-brand-accent text-brand-bg hover:bg-brand-secondary px-8 py-3.5 text-xs uppercase tracking-[0.22em] font-semibold rounded-sm shadow-md hover:shadow-lg transition-all duration-300 group"
+            className="btn-play-solid bg-brand-accent px-8 py-3.5 text-[11px]"
           >
             <ShoppingBag size={14} />
             Return to Bag

@@ -99,11 +99,11 @@ export default function CartDrawer() {
               {/* Top Header */}
               <div className="p-6 border-b border-brand-text/10 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <ShoppingBag size={18} className="stroke-[1.5] text-brand-accent" />
-                  <h2 id="cart-heading" className="font-serif text-lg tracking-wide font-medium">
-                    Your Ritual Bag
+                  <ShoppingBag size={18} className="stroke-[2] text-brand-accent" />
+                  <h2 id="cart-heading" className="font-display uppercase text-lg tracking-wide">
+                    Your Glow Bag
                   </h2>
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider bg-brand-pink text-brand-text px-2 py-0.5 rounded-full shadow-play font-rounded">
                     {totalItems} {totalItems === 1 ? "item" : "items"}
                   </span>
                 </div>
@@ -149,17 +149,17 @@ export default function CartDrawer() {
               <div className="flex-1 overflow-y-auto p-6">
                 {items.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center py-16 px-4">
-                    <div className="w-20 h-20 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-accent mb-6 shadow-sm">
-                      <ShoppingBag size={32} className="stroke-[1.25]" />
+                    <div className="w-24 h-24 rounded-full bg-brand-yellow flex items-center justify-center text-brand-text mb-6 shadow-play">
+                      <ShoppingBag size={34} className="stroke-[2]" />
                     </div>
-                    <h3 className="font-serif text-2xl font-light mb-3 text-brand-text">Your bag is empty</h3>
-                    <p className="text-xs text-brand-text/60 max-w-xs mb-8 font-light leading-relaxed">
-                      Nurture your skin barrier with our handcrafted botanicals, soothing lipids, and bio-compatible peptide formulas.
+                    <h3 className="font-display uppercase text-3xl mb-3 text-brand-text">Your bag is empty!</h3>
+                    <p className="font-rounded text-sm text-brand-text/60 font-semibold max-w-xs mb-8 leading-snug">
+                      Fill it with delicious, feel-good formulas your skin barrier will love.
                     </p>
                     <Link
                       href="/shop"
                       onClick={closeCart}
-                      className="inline-flex items-center justify-center bg-brand-accent text-brand-bg hover:bg-brand-secondary px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-semibold rounded shadow-md hover:shadow-lg transition-all duration-300 active:scale-[0.99]"
+                      className="btn-play-solid bg-brand-accent px-8 py-3.5 text-[11px]"
                     >
                       Continue Shopping
                     </Link>
@@ -186,7 +186,7 @@ export default function CartDrawer() {
                                 <span className="text-[9px] uppercase tracking-wider text-brand-accent font-semibold block">
                                   {item.product.category}
                                 </span>
-                                <h4 className="font-serif text-sm font-light text-brand-text leading-snug">
+                                <h4 className="font-rounded text-sm font-extrabold text-brand-text leading-snug">
                                   {item.product.name}
                                 </h4>
                               </div>
@@ -265,10 +265,10 @@ export default function CartDrawer() {
                   <Link
                     href="/cart"
                     onClick={closeCart}
-                    className="w-full bg-brand-accent hover:bg-brand-secondary text-brand-bg py-3.5 px-6 rounded text-xs uppercase tracking-[0.2em] font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 group"
+                    className="btn-play-solid bg-brand-accent w-full py-3.5 px-6 text-[11px]"
                   >
                     <span>Proceed to Checkout</span>
-                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
 
                   <div className="flex items-center justify-center gap-4 text-[10px] text-brand-text/45 uppercase tracking-wider pt-1">

@@ -14,12 +14,15 @@ import {
   Truck,
   RotateCcw,
   ShieldCheck,
+  Heart,
 } from "lucide-react";
 import { Product } from "@/lib/products";
-import { CartProvider, useCart } from "@/lib/cart-context";
+import { useCart } from "@/lib/cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 import CartDrawer from "@/components/ui/CartDrawer";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
+import ProductReviewsSection from "@/components/product/ProductReviewsSection";
 
 // ─── Trust pillars ─────────────────────────────────────────────────────────────
 const TRUST_PILLARS = [
@@ -74,7 +77,7 @@ function RelatedCard({ product }: { product: Product }) {
         </span>
       </div>
       <Link href={`/product/${product.id}`}>
-        <h3 className="font-serif text-sm font-light tracking-wide text-brand-text hover:text-brand-accent transition-colors leading-relaxed mb-3">
+        <h3 className="font-rounded text-base font-extrabold tracking-wide text-brand-text hover:text-brand-blue transition-colors leading-snug mb-3">
           {product.name}
         </h3>
       </Link>
@@ -87,12 +90,12 @@ function RelatedCard({ product }: { product: Product }) {
             setTimeout(() => setAdded(false), 1800);
           }
         }}
-        className={`mt-auto w-full py-2.5 text-[9px] uppercase tracking-[0.2em] font-semibold rounded-sm transition-all duration-300 ${
+        className={`mt-auto w-full py-3 text-[10px] uppercase tracking-[0.15em] font-extrabold font-rounded rounded-full transition-all duration-300 ${
           !product.inStock
             ? "bg-brand-text/5 text-brand-text/30 cursor-not-allowed"
             : added
-            ? "bg-brand-accent text-brand-bg"
-            : "bg-brand-text text-brand-bg hover:bg-brand-accent"
+            ? "bg-brand-magenta text-white"
+            : "bg-brand-accent text-white hover:bg-brand-magenta hover:-translate-y-0.5 shadow-play"
         }`}
       >
         {!product.inStock ? "Sold Out" : added ? "✓ Added" : "Add to Bag"}
@@ -101,9 +104,9 @@ function RelatedCard({ product }: { product: Product }) {
   );
 }
 
-// ─── Main product detail inner (inside CartProvider) ──────────────────────────
 function ProductDetailInner({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
   const { addItem, openCart } = useCart();
+  const { addItem: addToWishlist, removeItem: removeFromWishlist, hasItem: inWishlist } = useWishlist();
 
   const related = relatedProducts;
 
@@ -218,23 +221,25 @@ function ProductDetailInner({ product, relatedProducts }: { product: Product; re
             </Link>
 
             {/* Rating */}
-            <div className="flex items-center gap-1 mb-3" aria-label="4.8 out of 5 stars">
+            <div className="flex items-center gap-1 mb-3" aria-label={`${product.avg_rating ?? 0} out of 5 stars`}>
               {[1, 2, 3, 4, 5].map((s) => (
                 <Star
                   key={s}
                   size={11}
                   className={
-                    s <= 4
+                    s <= Math.round(product.avg_rating ?? 0)
                       ? "fill-brand-accent text-brand-accent"
                       : "fill-brand-accent/30 text-brand-accent/30"
                   }
                 />
               ))}
-              <span className="text-[10px] text-brand-text/40 ml-1">(128 reviews)</span>
+              <span className="text-[10px] text-brand-text/40 ml-1">
+                ({product.review_count ?? 0} review{(product.review_count ?? 0) !== 1 ? "s" : ""})
+              </span>
             </div>
 
             {/* Name */}
-            <h1 className="font-serif text-3xl md:text-4xl font-light tracking-wide leading-tight mb-4">
+            <h1 className="font-rounded text-3xl md:text-4xl font-extrabold leading-tight mb-4">
               {product.name}
             </h1>
 
@@ -258,9 +263,7 @@ function ProductDetailInner({ product, relatedProducts }: { product: Product; re
 
             {/* Features */}
             <div className="mb-8">
-              <h2 className="text-[10px] uppercase tracking-[0.22em] text-brand-text/40 font-semibold mb-3">
-                Key Benefits
-              </h2>
+              <span className="sticker bg-brand-lilac text-brand-text text-[10px] px-4 py-1 -rotate-2 inline-flex shadow-play mb-3">Key Benefits</span>
               <ul className="flex flex-col gap-2.5">
                 {product.features.map((feature) => (
                   <li
@@ -299,25 +302,42 @@ function ProductDetailInner({ product, relatedProducts }: { product: Product; re
                 </button>
               </div>
 
-              {/* Add to Bag */}
-              <button
-                onClick={handleAddToBag}
-                disabled={!product.inStock}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 text-[10px] uppercase tracking-[0.22em] font-semibold rounded-sm transition-all duration-300 ${
-                  !product.inStock
-                    ? "bg-brand-text/10 text-brand-text/30 cursor-not-allowed"
+              {/* Add to Bag + Wishlist */}
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAddToBag}
+                  disabled={!product.inStock}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-[10px] uppercase tracking-[0.15em] font-extrabold font-rounded rounded-full transition-all duration-300 ${
+                    !product.inStock
+                      ? "bg-brand-text/10 text-brand-text/30 cursor-not-allowed"
+                      : added
+                      ? "bg-brand-magenta text-white scale-[0.99]"
+                      : "bg-brand-accent text-white hover:bg-brand-magenta hover:-translate-y-0.5 shadow-play active:scale-[0.99]"
+                  }`}
+                >
+                  <ShoppingBag size={14} />
+                  {!product.inStock
+                    ? "Sold Out"
                     : added
-                    ? "bg-brand-accent text-brand-bg scale-[0.99]"
-                    : "bg-brand-text text-brand-bg hover:bg-brand-accent active:scale-[0.99]"
-                }`}
-              >
-                <ShoppingBag size={14} />
-                {!product.inStock
-                  ? "Sold Out"
-                  : added
-                  ? "Added to Bag ✓"
-                  : "Add to Bag"}
-              </button>
+                    ? "Added to Bag ✓"
+                    : "Add to Bag"}
+                </button>
+                <button
+                  onClick={() =>
+                    inWishlist(product.id)
+                      ? removeFromWishlist(product.id)
+                      : addToWishlist({ productId: product.id, name: product.name, price: product.price, image: product.image, slug: product.id })
+                  }
+                  className={`px-3 py-3 rounded-sm border transition-all duration-300 ${
+                    inWishlist(product.id)
+                      ? "border-red-300 bg-red-50 text-red-600"
+                      : "border-brand-text/20 hover:border-brand-accent text-brand-text/40 hover:text-brand-accent"
+                  }`}
+                  aria-label={inWishlist(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                  <Heart size={16} className={inWishlist(product.id) ? "fill-current" : ""} />
+                </button>
+              </div>
             </div>
 
             {/* Trust pillars */}
@@ -336,15 +356,18 @@ function ProductDetailInner({ product, relatedProducts }: { product: Product; re
         </div>
       </div>
 
+      {/* Reviews */}
+      <div className="max-w-6xl mx-auto px-6 md:px-12 mt-8">
+        <ProductReviewsSection slug={product.id} />
+      </div>
+
       {/* Related products */}
       {related.length > 0 && (
         <section className="max-w-6xl mx-auto px-6 md:px-12 mt-8 pt-16 border-t border-brand-text/5">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-brand-accent font-semibold block mb-2">
-                Complete the Ritual
-              </span>
-              <h2 className="font-serif text-2xl md:text-3xl font-light tracking-wide">
+              <span className="sticker bg-brand-mint text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">Complete the Ritual</span>
+              <h2 className="heading-display text-brand-text text-3xl md:text-4xl">
                 You May Also Like
               </h2>
             </div>
@@ -382,16 +405,13 @@ function ProductDetailInner({ product, relatedProducts }: { product: Product; re
   );
 }
 
-// ─── Exported client component (wraps in CartProvider) ────────────────────────
 export default function ProductDetailClient({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
   return (
-    <CartProvider>
-      <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
+    <div className="min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
         <Header />
         <ProductDetailInner product={product} relatedProducts={relatedProducts} />
         <Footer />
         <CartDrawer />
-      </div>
-    </CartProvider>
+    </div>
   );
 }

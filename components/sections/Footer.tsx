@@ -31,9 +31,28 @@ function PinterestIcon() {
 }
 
 /* ─── Link columns data ─────────────────────────────────────────────────── */
-const shopLinks   = ["Cleansers", "Serums", "Moisturizers", "SPF", "Gift Sets", "New Arrivals"];
-const aboutLinks  = ["Our Story", "Ingredients", "Sustainability", "Press", "Careers"];
-const supportLinks = ["FAQ", "Contact Us", "Order Tracking", "Returns & Exchanges", "Store Locator"];
+const shopLinks = [
+  { label: "Cleansers", href: "/shop?category=cleansers" },
+  { label: "Serums", href: "/shop?category=serums" },
+  { label: "Moisturizers", href: "/shop?category=moisturizers" },
+  { label: "SPF", href: "/shop?category=spf" },
+  { label: "Gift Sets", href: "/shop?category=gift-sets" },
+  { label: "New Arrivals", href: "/shop" },
+];
+const aboutLinks = [
+  { label: "Our Story", href: "#" },
+  { label: "Ingredients", href: "#" },
+  { label: "Sustainability", href: "#" },
+  { label: "Press", href: "#" },
+  { label: "Careers", href: "#" },
+];
+const supportLinks = [
+  { label: "FAQ", href: "#" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Order Tracking", href: "/account" },
+  { label: "Returns & Exchanges", href: "/legal/refund-policy" },
+  { label: "Store Locator", href: "#" },
+];
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -56,36 +75,36 @@ export default function Footer() {
     <footer className="bg-brand-bg border-t border-brand-text/8 text-brand-text">
 
       {/* ── Top: Logo + Tagline + Email signup ─────────────────────────────── */}
-      <div className="py-20 px-6 md:px-12 border-b border-brand-text/8 text-center flex flex-col items-center gap-6">
+      <div className="py-20 px-6 md:px-12 border-b-4 border-brand-yellow/70 text-center flex flex-col items-center gap-6">
         {/* Brand wordmark */}
-        <Link href="/" className="font-serif text-3xl md:text-4xl tracking-[0.3em] font-semibold text-brand-text hover:opacity-80 transition-opacity select-none">
-          GLASSSKIN
+        <Link href="/" className="font-display text-3xl md:text-5xl tracking-wide uppercase text-brand-text hover:text-brand-accent transition-colors select-none">
+          Glass<span className="text-brand-accent">Skin</span>
         </Link>
 
         {/* Tagline */}
-        <p className="font-serif italic text-sm md:text-base font-light tracking-widest text-brand-text/55">
-          Radiance, Ritualized.
+        <p className="font-rounded italic text-base md:text-lg font-extrabold tracking-wide text-brand-text/60">
+          Radiance, Deliciously Simple.
         </p>
 
         {/* Divider */}
         <div className="flex items-center gap-4 w-full max-w-xs">
-          <div className="flex-1 h-[0.5px] bg-brand-accent/30" />
-          <span className="text-brand-accent text-xs">✦</span>
-          <div className="flex-1 h-[0.5px] bg-brand-accent/30" />
+          <div className="flex-1 h-1 bg-brand-accent/40 rounded-full" />
+          <span className="text-brand-accent text-lg">✦</span>
+          <div className="flex-1 h-1 bg-brand-accent/40 rounded-full" />
         </div>
 
         {/* Email signup */}
         <div className="w-full max-w-md">
-          <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-brand-accent mb-3">
+          <span className="sticker bg-brand-yellow text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
             Get 10% off your first order
-          </p>
+          </span>
           {submitted ? (
-            <p className="text-xs font-serif italic text-brand-text/60 py-3">
-              Welcome to the ritual. Your code is on its way. ✦
+            <p className="font-rounded text-sm font-extrabold text-brand-magenta py-3">
+              Welcome to the glow. Your code is on its way! ✦
             </p>
           ) : (
             <form onSubmit={handleSubmit} noValidate className="space-y-2">
-              <div className="flex gap-0 rounded overflow-hidden border border-brand-text/15 focus-within:border-brand-accent transition-colors duration-300">
+              <div className="flex gap-0 rounded-full overflow-hidden border-4 border-brand-text bg-white focus-within:border-brand-accent transition-colors duration-300 shadow-play">
                 <input
                   type="email"
                   required
@@ -96,11 +115,11 @@ export default function Footer() {
                   }}
                   placeholder="your@email.com"
                   aria-label="Email address for 10% discount"
-                  className="flex-1 bg-transparent px-4 py-3 text-xs text-brand-text placeholder:text-brand-text/35 outline-none"
+                  className="flex-1 bg-transparent px-5 py-3 text-sm text-brand-text placeholder:text-brand-text/40 outline-none"
                 />
                 <button
                   type="submit"
-                  className="bg-brand-accent text-brand-bg hover:bg-brand-secondary px-5 py-3 text-[10px] uppercase tracking-[0.2em] font-bold transition-colors duration-300 whitespace-nowrap"
+                  className="bg-brand-accent text-white hover:bg-brand-magenta px-6 py-3 text-[10px] uppercase tracking-[0.15em] font-extrabold transition-colors duration-300 whitespace-nowrap font-rounded"
                 >
                   Subscribe
                 </button>
@@ -119,16 +138,16 @@ export default function Footer() {
       </div>
 
       {/* ── Middle: Link columns + Social ──────────────────────────────────── */}
-      <div className="py-16 px-6 md:px-12 border-b border-brand-text/8">
+      <div className="py-16 px-6 md:px-12 border-b-4 border-brand-yellow/70">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-6">
 
           {/* Shop */}
           <div>
-            <h4 className="text-[9px] uppercase tracking-[0.3em] font-bold text-brand-text mb-5">Shop</h4>
+            <h4 className="font-rounded text-xs uppercase tracking-widest font-extrabold text-brand-magenta mb-5">Shop</h4>
             <ul className="flex flex-col gap-3">
-              {shopLinks.map((label) => (
+              {shopLinks.map(({ label, href }) => (
                 <li key={label}>
-                  <Link href="#" className="text-xs text-brand-text/55 hover:text-brand-accent transition-colors duration-200 tracking-wide">
+                  <Link href={href} className="text-sm font-medium text-brand-text/60 hover:text-brand-blue transition-colors duration-200">
                     {label}
                   </Link>
                 </li>
@@ -138,11 +157,11 @@ export default function Footer() {
 
           {/* About */}
           <div>
-            <h4 className="text-[9px] uppercase tracking-[0.3em] font-bold text-brand-text mb-5">About</h4>
+            <h4 className="font-rounded text-xs uppercase tracking-widest font-extrabold text-brand-magenta mb-5">About</h4>
             <ul className="flex flex-col gap-3">
-              {aboutLinks.map((label) => (
+              {aboutLinks.map(({ label, href }) => (
                 <li key={label}>
-                  <Link href="#" className="text-xs text-brand-text/55 hover:text-brand-accent transition-colors duration-200 tracking-wide">
+                  <Link href={href} className="text-sm font-medium text-brand-text/60 hover:text-brand-blue transition-colors duration-200">
                     {label}
                   </Link>
                 </li>
@@ -152,11 +171,11 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="text-[9px] uppercase tracking-[0.3em] font-bold text-brand-text mb-5">Support</h4>
+            <h4 className="font-rounded text-xs uppercase tracking-widest font-extrabold text-brand-magenta mb-5">Support</h4>
             <ul className="flex flex-col gap-3">
-              {supportLinks.map((label) => (
+              {supportLinks.map(({ label, href }) => (
                 <li key={label}>
-                  <Link href="#" className="text-xs text-brand-text/55 hover:text-brand-accent transition-colors duration-200 tracking-wide">
+                  <Link href={href} className="text-sm font-medium text-brand-text/60 hover:text-brand-blue transition-colors duration-200">
                     {label}
                   </Link>
                 </li>
@@ -167,25 +186,25 @@ export default function Footer() {
           {/* Social + Legal */}
           <div className="flex flex-col gap-8">
             <div>
-              <h4 className="text-[9px] uppercase tracking-[0.3em] font-bold text-brand-text mb-5">Follow</h4>
+              <h4 className="font-rounded text-xs uppercase tracking-widest font-extrabold text-brand-magenta mb-5">Follow</h4>
               <div className="flex items-center gap-4">
                 {/* Instagram */}
                 <Link href="https://instagram.com/glassskin" target="_blank" rel="noopener noreferrer"
-                  className="text-brand-text/50 hover:text-brand-accent transition-colors duration-200"
+                  className="w-11 h-11 flex items-center justify-center rounded-full bg-white border-4 border-brand-text text-brand-text hover:bg-brand-accent hover:text-white transition-colors duration-200 shadow-play"
                   aria-label="Instagram"
                 >
                   <InstagramIcon />
                 </Link>
                 {/* TikTok */}
                 <Link href="https://tiktok.com/@glassskin" target="_blank" rel="noopener noreferrer"
-                  className="text-brand-text/50 hover:text-brand-accent transition-colors duration-200"
+                  className="w-11 h-11 flex items-center justify-center rounded-full bg-white border-4 border-brand-text text-brand-text hover:bg-brand-sky hover:text-white transition-colors duration-200 shadow-play"
                   aria-label="TikTok"
                 >
                   <TikTokIcon />
                 </Link>
                 {/* Pinterest */}
                 <Link href="https://pinterest.com/glassskin" target="_blank" rel="noopener noreferrer"
-                  className="text-brand-text/50 hover:text-brand-accent transition-colors duration-200"
+                  className="w-11 h-11 flex items-center justify-center rounded-full bg-white border-4 border-brand-text text-brand-text hover:bg-brand-magenta hover:text-white transition-colors duration-200 shadow-play"
                   aria-label="Pinterest"
                 >
                   <PinterestIcon />
@@ -195,11 +214,15 @@ export default function Footer() {
 
             {/* Legal links */}
             <div>
-              <h4 className="text-[9px] uppercase tracking-[0.3em] font-bold text-brand-text mb-5">Legal</h4>
+              <h4 className="font-rounded text-xs uppercase tracking-widest font-extrabold text-brand-magenta mb-5">Legal</h4>
               <ul className="flex flex-col gap-3">
-                {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((label) => (
+                {[
+                  { label: "Privacy Policy", href: "/legal/privacy" },
+                  { label: "Terms of Service", href: "/legal/terms" },
+                  { label: "Refund & Cancellation", href: "/legal/refund-policy" },
+                ].map(({ label, href }) => (
                   <li key={label}>
-                    <Link href="#" className="text-xs text-brand-text/55 hover:text-brand-accent transition-colors duration-200 tracking-wide">
+                    <Link href={href} className="text-sm font-medium text-brand-text/60 hover:text-brand-blue transition-colors duration-200">
                       {label}
                     </Link>
                   </li>
@@ -212,12 +235,12 @@ export default function Footer() {
       </div>
 
       {/* ── Bottom bar ─────────────────────────────────────────────────────── */}
-      <div className="py-6 px-6 md:px-12">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[9px] text-brand-text/35 uppercase tracking-[0.15em]">
-          <p>© 2026 GLASSSKIN. All rights reserved.</p>
-          <p>
+      <div className="py-6 px-6 md:px-12 bg-brand-text text-brand-bg">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-semibold uppercase tracking-[0.1em]">
+          <p className="font-rounded">© 2026 GLASSSKIN. All rights reserved.</p>
+          <p className="font-rounded">
             Crafted with care in India ✦ Powered by{" "}
-            <Link href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors duration-200">
+            <Link href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="text-brand-yellow hover:text-brand-accent transition-colors duration-200">
               Next.js
             </Link>
           </p>

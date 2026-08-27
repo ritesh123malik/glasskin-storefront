@@ -20,6 +20,8 @@ next phase.
   values from request headers. Service-role Supabase clients are server-only.
 - Cash on delivery is a supported payment method. Its order lifecycle must
   remain separate from prepaid Stripe payment states.
+- Stripe webhook event IDs are stored and lifecycle effects run through SQL RPCs;
+  fulfillment verifies the Stripe amount before decrementing reserved inventory.
 
 ## Verification
 
@@ -35,14 +37,17 @@ npm test
 
 ## RLS Audit Checklist
 
-To be completed alongside the commerce-schema migration. Every customer,
-address, cart, order, order item, reservation, payment, shipment, review,
-wishlist, or alert table must permit customers to access only their own rows.
-Inventory, promotions, fulfilment, and payment mutations use server-only
-service-role code.
+Commerce-schema migrations (`supabase/migrations/20260827000000_add_commerce_foundation.sql`,
+`..._0100_add_checkout_lifecycle.sql`, `..._0200_add_account_admin_orders.sql`) enable RLS on
+every customer/order/payment/shipment/reservation/return table and add customer-owns-rows
+policies. Inventory, promotions, fulfilment, and payment mutations run only through
+server-only service-role code (`lib/supabase-admin.ts`, `lib/supabase-server.ts`). Re-audit
+whenever a new customer-facing table is added.
 
 ## Decisions Log
 
 - 2026-08-27: Cash on delivery will be implemented.
 - 2026-08-27: Legal and third-party service settings use clearly marked
   placeholders until business details and credentials are supplied.
+- 2026-08-27: Guest Stripe orders have a nullable customer reference; access to a
+  guest success page is verified with Stripe's checkout-session secret.
