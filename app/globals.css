@@ -198,7 +198,7 @@ img, svg {
   .input-play {
     @apply rounded-full border-[3px] border-brand-text bg-white
            px-5 py-3 text-sm font-rounded font-semibold
-           placeholder:text-brand-text/40 outline-none
+           placeholder:text-brand-text placeholder:opacity-40 outline-none
            transition-all duration-200;
   }
   .input-play:focus {
