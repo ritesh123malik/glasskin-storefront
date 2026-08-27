@@ -82,8 +82,8 @@ export default function Hero() {
         <div className="w-full lg:w-[45%] relative min-h-[350px] lg:min-h-auto order-1 lg:order-2">
           <div className="absolute inset-0 w-full h-full">
             <Image
-              src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1600&q=85"
-              alt="Radiant, translucent glass skin ritual"
+              src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1600&q=85"
+              alt="Glasskin product bottles with white pump, towel, pink tulips, and candle"
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 45vw"
@@ -102,7 +102,7 @@ export default function Hero() {
       </div>
 
       {/* Infinite Auto-Scrolling Marquee Strip */}
-      <div className="w-full overflow-hidden bg-brand-blue py-5 flex items-center select-none relative z-10">
+      <div className="w-full overflow-hidden bg-brand-blue py-4 flex items-center select-none relative z-10">
         <style dangerouslySetInnerHTML={{__html: `
           @keyframes marquee {
             0% { transform: translateX(0%); }
@@ -113,19 +113,19 @@ export default function Hero() {
           }
         `}} />
         <div className="flex w-full overflow-hidden">
-          <div className="animate-marquee-css flex whitespace-nowrap gap-4 text-xs md:text-sm font-extrabold uppercase tracking-widest text-white font-rounded" style={{ fontVariant: "all-small-caps" }}>
+          <div className="animate-marquee-css flex whitespace-nowrap gap-4 text-sm md:text-base font-extrabold uppercase tracking-wider text-white font-rounded">
             {Array.from({ length: 4 }).map((_, i) => (
               <span key={i} className="flex items-center">
-                <span>Dermatologist Tested</span>
-                <span className="text-brand-yellow mx-4">✦</span>
-                <span>Clean Formulas</span>
-                <span className="text-brand-yellow mx-4">✦</span>
-                <span>Cruelty-Free</span>
-                <span className="text-brand-yellow mx-4">✦</span>
                 <span>Made in Small Batches</span>
-                <span className="text-brand-yellow mx-4">✦</span>
+                <span className="mx-4">✦</span>
                 <span>Cruelty-Free</span>
-                <span className="text-brand-yellow mx-4">✦</span>
+                <span className="mx-4">✦</span>
+                <span>Dermatologist Tested</span>
+                <span className="mx-4">✦</span>
+                <span>Clean Formulas</span>
+                <span className="mx-4">✦</span>
+                <span>Cruelty-Free</span>
+                <span className="mx-4">✦</span>
               </span>
             ))}
           </div>
