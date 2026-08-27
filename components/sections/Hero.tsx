@@ -102,42 +102,30 @@ export default function Hero() {
       </div>
 
       {/* Infinite Auto-Scrolling Marquee Strip */}
-      <div className="w-full bg-brand-blue py-8 select-none relative z-10 overflow-hidden">
+      <div className="w-full bg-brand-blue py-8 select-none overflow-hidden">
         <style dangerouslySetInnerHTML={{__html: `
-          @keyframes marquee {
+          @keyframes marquee-scroll {
             0% { transform: translateX(0%); }
-            100% { transform: translateX(-100%); }
+            100% { transform: translateX(-50%); }
           }
-          .animate-marquee-inner {
-            animation: marquee 30s linear infinite;
+          .marquee-track {
+            animation: marquee-scroll 60s linear infinite;
             display: flex;
-            width: max-content;
+            white-space: nowrap;
           }
         `}} />
-        <div className="animate-marquee-inner gap-8 text-lg md:text-2xl font-extrabold uppercase tracking-wider text-white">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="flex items-center">
-              <span>Made in Small Batches</span>
-              <span className="mx-4 text-white/70">✦</span>
-            </span>
-          ))}
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="flex items-center">
-              <span>Cruelty-Free</span>
-              <span className="mx-4 text-white/70">✦</span>
-            </span>
-          ))}
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="flex items-center">
-              <span>Dermatologist Tested</span>
-              <span className="mx-4 text-white/70">✦</span>
-            </span>
-          ))}
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="flex items-center">
-              <span>Clean Formulas</span>
-              <span className="mx-4 text-white/70">✦</span>
-            </span>
+        <div className="marquee-track">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <React.Fragment key={i}>
+              <span className="text-lg md:text-2xl font-extrabold uppercase tracking-wider text-white mx-8">Made in Small Batches</span>
+              <span className="text-white/70">✦</span>
+              <span className="text-lg md:text-2xl font-extrabold uppercase tracking-wider text-white mx-8">Cruelty-Free</span>
+              <span className="text-white/70">✦</span>
+              <span className="text-lg md:text-2xl font-extrabold uppercase tracking-wider text-white mx-8">Dermatologist Tested</span>
+              <span className="text-white/70">✦</span>
+              <span className="text-lg md:text-2xl font-extrabold uppercase tracking-wider text-white mx-8">Clean Formulas</span>
+              <span className="text-white/70">✦</span>
+            </React.Fragment>
           ))}
         </div>
       </div>
