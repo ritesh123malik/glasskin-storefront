@@ -2,66 +2,310 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════
+   GLASSSKIN × PARTAKE DESIGN LANGUAGE
+   Bold, playful, candy-bright CPG aesthetic
+   Every section gets its own vivid candy color.
+═══════════════════════════════════════════════════════════════ */
+
 :root {
-  /* Partake design language — warm cream base + vivid candy-bright brand colors */
-  --background: #FFF6EB;
-  --foreground: #261F1A;
-  --brand-bg: #FFF6EB;
-  --brand-text: #261F1A;
-  --brand-accent: #FF7700;
-  --brand-secondary: #FF9A3D;
-  /* Extended Partake-inspired palette */
-  --brand-blue: #00559B;
-  --brand-sky: #009EDE;
-  --brand-magenta: #BE008B;
-  --brand-red: #BC0041;
-  --brand-yellow: #FDB500;
-  --brand-citron: #FDE730;
-  --brand-peach: #FFCD78;
-  --brand-pink: #F4C0D6;
-  --brand-lilac: #E2B0D1;
-  --brand-mint: #5CCAC8;
-  --brand-cyan: #82D8E7;
+  /* Base palette */
+  --background:       #FFF6EB;
+  --foreground:       #1C1410;
+
+  /* Core brand */
+  --brand-bg:         #FFF6EB;
+  --brand-text:       #1C1410;
+  --brand-accent:     #FF6B00;
+  --brand-secondary:  #FF9A3D;
+
+  /* Candy palette — each used as a full section BG */
+  --brand-blue:       #00559B;
+  --brand-sky:        #1EB4F0;
+  --brand-magenta:    #CC006F;
+  --brand-red:        #E8003D;
+  --brand-yellow:     #FFD000;
+  --brand-citron:     #E8EC00;
+  --brand-peach:      #FFBE78;
+  --brand-pink:       #FFC0D4;
+  --brand-lilac:      #C8A8DC;
+  --brand-mint:       #00C4A8;
+  --brand-cyan:       #78D8EC;
+  --brand-green:      #00A878;
+  --brand-purple:     #6040B8;
+
+  /* Section fills — pulled directly from Partake's page rhythm */
+  --section-warm:     #FFF6EB;   /* cream / default */
+  --section-yellow:   #FFD000;   /* bold yellow band */
+  --section-sky:      #B8E8F8;   /* soft sky blue */
+  --section-pink:     #FFDDE8;   /* soft pink */
+  --section-mint:     #C8F0E8;   /* soft mint */
+  --section-blue:     #00559B;   /* deep blue (dark) */
+  --section-ink:      #1C1410;   /* near-black */
+
+  /* Typography scale helpers */
+  --type-hero:    clamp(3.2rem, 10vw, 9rem);
+  --type-h2:      clamp(2.4rem, 6vw,  5.5rem);
+  --type-h3:      clamp(1.6rem, 3vw,  2.4rem);
+  --type-body:    1rem;
+  --type-small:   0.75rem;
+  --type-micro:   0.625rem;
+
+  /* Radius */
+  --r-btn:   9999px;
+  --r-card:  1.5rem;
+  --r-badge: 9999px;
+
+  /* Shadows — "punchy" Partake drop style */
+  --shadow-btn:   4px 4px 0 0 rgba(28,20,16,0.9);
+  --shadow-card:  6px 6px 0 0 rgba(28,20,16,0.12);
+  --shadow-pop:   0 8px 0 -2px rgba(0,0,0,0.15);
 }
 
+/* ── Base resets ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 body {
   color: var(--foreground);
   background: var(--background);
+  overflow-x: hidden;
 }
-
 ::selection {
-  background: #FF7700;
-  color: #FFF6EB;
+  background: #FFD000;
+  color: #1C1410;
 }
-
-/* Playful rounded button reset */
 button, a {
   -webkit-tap-highlight-color: transparent;
 }
-
-/* ── Partake-style component recipes ───────────────────────── */
-@layer components {
-  .btn-play {
-    @apply inline-flex items-center justify-center gap-2 font-rounded font-extrabold uppercase tracking-wider rounded-full transition-all duration-300 active:translate-y-0.5;
-  }
-  .btn-play-solid {
-    @apply inline-flex items-center justify-center gap-2 font-rounded font-extrabold uppercase tracking-wider rounded-full transition-all duration-300 active:translate-y-0.5 text-brand-bg shadow-play hover:shadow-play-hover hover:-translate-y-0.5;
-  }
-  .heading-display {
-    @apply font-display uppercase leading-[0.95] tracking-display;
-  }
-  .sticker {
-    @apply inline-flex items-center justify-center font-rounded font-extrabold uppercase tracking-wide text-white rounded-full;
-  }
+img, svg {
+  display: block;
 }
 
+/* ── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: #FFF6EB; }
+::-webkit-scrollbar-thumb  { background: #FFD000; border-radius: 999px; }
+
+/* ══════════════════════════════════════════════════════════
+   PARTAKE COMPONENT RECIPES — @layer components
+══════════════════════════════════════════════════════════ */
+@layer components {
+
+  /* ── Buttons ─────────────────────────────────────────── */
+  /* Solid Partake pill button — hard shadow on bottom */
+  .btn-play {
+    @apply inline-flex items-center justify-center gap-2
+           font-rounded font-extrabold uppercase tracking-wider
+           rounded-full border-[3px] border-brand-text
+           transition-all duration-200 cursor-pointer
+           active:translate-y-[2px] active:shadow-none
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent;
+    box-shadow: var(--shadow-btn);
+  }
+  .btn-play:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 6px 0 0 rgba(28,20,16,0.9);
+  }
+  .btn-play:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+
+  /* Legacy alias — same as btn-play with bg-brand-accent preset */
+  .btn-play-solid {
+    @apply inline-flex items-center justify-center gap-2
+           font-rounded font-extrabold uppercase tracking-wider
+           rounded-full border-[3px] border-brand-text
+           transition-all duration-200 cursor-pointer
+           active:translate-y-[2px] active:shadow-none
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent
+           text-brand-bg;
+    box-shadow: var(--shadow-btn);
+  }
+  .btn-play-solid:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 6px 0 0 rgba(28,20,16,0.9);
+  }
+  .btn-play-solid:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+
+  /* Ghost pill variant */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           font-rounded font-extrabold uppercase tracking-wider
+           rounded-full border-[3px] border-current
+           bg-transparent transition-all duration-200 cursor-pointer
+           active:translate-y-[2px]
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent;
+  }
+  .btn-ghost:hover {
+    @apply bg-brand-yellow text-brand-text;
+    box-shadow: var(--shadow-btn);
+  }
+
+  /* ── Typography ──────────────────────────────────────── */
+  /* Hero-scale display heading — Partake uses ultra-bold condensed */
+  .heading-display {
+    @apply font-display uppercase leading-[0.9] tracking-tight;
+  }
+  .heading-section {
+    @apply font-display uppercase leading-[0.95] tracking-tight;
+  }
+
+  /* ── Sticker / Badge ─────────────────────────────────── */
+  /* Partake uses these everywhere — small pill labels at angles */
+  .sticker {
+    @apply inline-flex items-center justify-center
+           font-rounded font-extrabold uppercase tracking-wide
+           rounded-full px-4 py-1.5 text-[0.65rem] leading-none
+           select-none cursor-default;
+    border: 2.5px solid rgba(28,20,16,0.25);
+    box-shadow: 2px 2px 0 0 rgba(28,20,16,0.15);
+  }
+
+  /* ── Section wave divider decoration ────────────────── */
+  .section-stripe {
+    @apply w-full h-3 md:h-4 relative overflow-hidden;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--brand-yellow) 0px,
+      var(--brand-yellow) 8px,
+      transparent 8px,
+      transparent 16px
+    );
+  }
+
+  /* ── Card ────────────────────────────────────────────── */
+  .card-play {
+    @apply rounded-2xl border-[3px] border-brand-text bg-white overflow-hidden
+           transition-all duration-200;
+    box-shadow: var(--shadow-card);
+  }
+  .card-play:hover {
+    transform: translateY(-4px);
+    box-shadow: 8px 10px 0 0 rgba(28,20,16,0.12);
+  }
+
+  /* ── Input ───────────────────────────────────────────── */
+  .input-play {
+    @apply rounded-full border-[3px] border-brand-text bg-white
+           px-5 py-3 text-sm font-rounded font-semibold
+           placeholder:text-brand-text/40 outline-none
+           transition-all duration-200;
+  }
+  .input-play:focus {
+    @apply border-brand-accent;
+    box-shadow: 0 0 0 3px rgba(255,107,0,0.18);
+  }
+
+  /* ── Marquee ─────────────────────────────────────────── */
+  .marquee-track {
+    @apply flex whitespace-nowrap;
+    animation: marquee 28s linear infinite;
+  }
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+}
+
+/* ══════════════════════════════════════════════════════════
+   UTILITY EXTRAS — @layer utilities
+══════════════════════════════════════════════════════════ */
 @layer utilities {
-  .text-stroke-white {
-    -webkit-text-stroke: 2px #FFF6EB;
-    color: transparent;
+  /* Text stroke utilities */
+  .text-stroke-white  { -webkit-text-stroke: 3px #FFF6EB;  color: transparent; }
+  .text-stroke-ink    { -webkit-text-stroke: 3px #1C1410;  color: transparent; }
+  .text-stroke-orange { -webkit-text-stroke: 3px #FF6B00;  color: transparent; }
+
+  /* Section background utilities */
+  .bg-section-warm    { background-color: var(--section-warm);   }
+  .bg-section-yellow  { background-color: var(--section-yellow); }
+  .bg-section-sky     { background-color: var(--section-sky);    }
+  .bg-section-pink    { background-color: var(--section-pink);   }
+  .bg-section-mint    { background-color: var(--section-mint);   }
+  .bg-section-blue    { background-color: var(--section-blue);   }
+  .bg-section-ink     { background-color: var(--section-ink);    }
+
+  /* Diagonal stripe pattern  */
+  .bg-stripe-yellow {
+    background: repeating-linear-gradient(
+      -45deg,
+      #FFD000 0px, #FFD000 8px,
+      #FFF6EB 8px, #FFF6EB 16px
+    );
   }
-  .text-stroke-ink {
-    -webkit-text-stroke: 2px #261F1A;
-    color: transparent;
+  .bg-stripe-ink {
+    background: repeating-linear-gradient(
+      -45deg,
+      #1C1410 0px, #1C1410 8px,
+      #2a2018 8px, #2a2018 16px
+    );
   }
+
+  /* Squiggle underline effect */
+  .underline-squiggle {
+    text-decoration: underline wavy 3px var(--brand-accent);
+    text-underline-offset: 4px;
+  }
+
+  /* No-tap flash on mobile */
+  .no-tap { -webkit-tap-highlight-color: transparent; }
+
+  /* Full-bleed helper */
+  .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   KEYFRAME ANIMATIONS
+══════════════════════════════════════════════════════════ */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-slow {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes float-bob {
+  0%, 100% { transform: translateY(0px) rotate(var(--rotate, 0deg)); }
+  50%       { transform: translateY(-10px) rotate(var(--rotate, 0deg)); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes fade-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.animate-marquee        { animation: marquee 28s linear infinite; }
+.animate-marquee-slow   { animation: marquee-slow 45s linear infinite; }
+.animate-float          { animation: float-bob 4s ease-in-out infinite; }
+.animate-spin-slow      { animation: spin-slow 12s linear infinite; }
+.animate-pulse-scale    { animation: pulse-scale 2s ease-in-out infinite; }
+.animate-slide-in-right { animation: slide-in-right 0.35s ease-out both; }
+.animate-fade-up        { animation: fade-up 0.5s ease-out both; }
+
+/* ── Focus ring ─────────────────────────────────────────── */
+:focus-visible {
+  outline: 3px solid var(--brand-accent);
+  outline-offset: 3px;
 }

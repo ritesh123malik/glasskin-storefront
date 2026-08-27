@@ -1,30 +1,54 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col items-center justify-center px-6 py-24 text-center">
-      <div className="w-16 h-16 rounded-full bg-brand-accent/10 text-brand-accent flex items-center justify-center mb-6">
-        <Sparkles size={32} />
+    <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col items-center justify-center px-6 py-24 text-center overflow-hidden">
+      {/* Decorative background blobs */}
+      <div aria-hidden="true" className="pointer-events-none select-none">
+        <div className="absolute top-0 left-0 w-72 h-72 rounded-full bg-brand-yellow/30 blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-brand-pink/30 blur-3xl" />
       </div>
-      <span className="sticker bg-brand-yellow text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
-        404 — Page Not Found
-      </span>
-      <h1 className="heading-display text-brand-text text-4xl md:text-6xl mb-4">
-        Formulation <span className="text-brand-magenta">uncharted</span>
-      </h1>
-      <p className="font-rounded text-sm text-brand-text/60 font-semibold max-w-md leading-snug mb-8">
-        The ritual or glow you are seeking does not exist or has been relocated.
-      </p>
 
-      <Link
-        href="/shop"
-        className="btn-play-solid bg-brand-accent px-8 py-3.5 text-[11px]"
+      {/* 404 big number */}
+      <div
+        className="font-display text-[clamp(6rem,25vw,18rem)] leading-none font-black text-brand-text/8 select-none mb-0 relative z-0"
+        aria-hidden="true"
       >
-        <ArrowLeft size={16} />
-        Explore Shop
-      </Link>
+        404
+      </div>
+
+      {/* Content card */}
+      <div className="relative z-10 -mt-8 md:-mt-16 flex flex-col items-center gap-5">
+        <span className="sticker bg-brand-yellow text-brand-text -rotate-2 shadow-btn">
+          Page Not Found
+        </span>
+        <h1 className="heading-section text-brand-text"
+            style={{ fontSize: "var(--type-h2)" }}>
+          Formulation{" "}
+          <span className="text-brand-magenta underline-squiggle">uncharted</span>
+        </h1>
+        <p className="font-rounded text-sm md:text-base text-brand-text/55 font-medium max-w-sm leading-relaxed">
+          The ritual you&apos;re looking for doesn&apos;t exist or has been relocated.
+          Let&apos;s get you back to the good stuff.
+        </p>
+        <div className="flex flex-wrap gap-3 justify-center mt-2">
+          <Link
+            href="/shop"
+            className="btn-play bg-brand-accent text-white text-[0.7rem] px-8 py-4"
+          >
+            Explore Shop
+          </Link>
+          <Link
+            href="/"
+            className="btn-play bg-white text-brand-text border-brand-text text-[0.7rem] px-8 py-4"
+          >
+            <ArrowLeft size={14} />
+            Go Home
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

@@ -4,226 +4,235 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  X,
+  Plus,
+  Minus,
+  Trash2,
+  ShoppingBag,
+  ArrowRight,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { useCart, FREE_SHIPPING_THRESHOLD } from "@/lib/cart-context";
 
 export default function CartDrawer() {
-  const {
-    items,
-    isOpen,
-    closeCart,
-    updateQuantity,
-    removeItem,
-    totalItems,
-    subtotal,
-  } = useCart();
-
+  const { items, isOpen, closeCart, updateQuantity, removeItem, totalItems, subtotal } =
+    useCart();
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Close drawer on escape key & Focus trap
+  /* ── Keyboard trap + ESC ── */
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        closeCart();
-        return;
-      }
-
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { closeCart(); return; }
       if (e.key === "Tab" && drawerRef.current) {
-        const focusableElements = drawerRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
+          'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'
         );
-        if (focusableElements.length === 0) return;
-
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last  = focusable[focusable.length - 1];
         if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
         } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
+          if (document.activeElement === last) { e.preventDefault(); first.focus(); }
         }
       }
     };
-
     if (isOpen) {
-      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keydown", handleKey);
       document.body.style.overflow = "hidden";
       setTimeout(() => {
-        const closeBtn = drawerRef.current?.querySelector<HTMLButtonElement>('button[aria-label="Close cart"]');
-        closeBtn?.focus();
-      }, 50);
+        drawerRef.current?.querySelector<HTMLButtonElement>('button[aria-label="Close cart"]')?.focus();
+      }, 60);
     }
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
     };
   }, [isOpen, closeCart]);
 
-  const freeShippingProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
-  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const freeProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const remaining   = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const shipping    = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 99;
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
+        <div className="fixed inset-0 z-[80] overflow-hidden">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
+            animate={{ opacity: 0.55 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.25 }}
             onClick={closeCart}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
+            className="fixed inset-0 bg-brand-text cursor-pointer"
             aria-hidden="true"
           />
 
-          {/* Slide-in Drawer */}
-          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+          {/* Drawer panel */}
+          <div className="fixed inset-y-0 right-0 max-w-full flex">
             <motion.div
               ref={drawerRef}
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 28, stiffness: 260 }}
-              className="w-screen max-w-md bg-brand-bg text-brand-text shadow-2xl flex flex-col justify-between border-l border-brand-text/10"
+              transition={{ type: "spring", damping: 26, stiffness: 240 }}
+              className="w-screen max-w-[420px] bg-brand-bg flex flex-col shadow-[−8px_0_40px_rgba(0,0,0,0.20)] border-l-[3px] border-brand-text"
               role="dialog"
               aria-modal="true"
               aria-labelledby="cart-heading"
             >
-              {/* Top Header */}
-              <div className="p-6 border-b border-brand-text/10 flex items-center justify-between">
+
+              {/* ── Header ── */}
+              <div className="flex items-center justify-between px-6 py-5 bg-brand-yellow border-b-[3px] border-brand-text">
                 <div className="flex items-center gap-3">
-                  <ShoppingBag size={18} className="stroke-[2] text-brand-accent" />
-                  <h2 id="cart-heading" className="font-display uppercase text-lg tracking-wide">
+                  <ShoppingBag size={18} className="stroke-[2.5]" />
+                  <h2
+                    id="cart-heading"
+                    className="font-display uppercase text-lg tracking-wide"
+                  >
                     Your Glow Bag
                   </h2>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider bg-brand-pink text-brand-text px-2 py-0.5 rounded-full shadow-play font-rounded">
-                    {totalItems} {totalItems === 1 ? "item" : "items"}
-                  </span>
+                  {totalItems > 0 && (
+                    <span className="sticker bg-brand-text text-brand-bg text-[0.55rem]">
+                      {totalItems} {totalItems === 1 ? "item" : "items"}
+                    </span>
+                  )}
                 </div>
                 <button
                   onClick={closeCart}
-                  className="p-1.5 rounded-full hover:bg-brand-text/5 text-brand-text/60 hover:text-brand-text transition-colors"
                   aria-label="Close cart"
+                  className="w-9 h-9 rounded-full bg-brand-text text-brand-bg flex items-center justify-center hover:bg-brand-accent transition-colors"
                 >
-                  <X size={18} />
+                  <X size={15} strokeWidth={3} />
                 </button>
               </div>
 
-              {/* Free Shipping Progress Bar (only when items exist) */}
+              {/* ── Free shipping progress ── */}
               {items.length > 0 && (
-                <div className="bg-brand-secondary/15 px-6 py-3.5 border-b border-brand-text/5">
-                  <div className="flex items-center justify-between text-[11px] mb-2">
+                <div className="px-6 py-3.5 bg-brand-yellow/20 border-b-2 border-brand-text/10">
+                  <div className="flex items-center justify-between text-[0.65rem] font-rounded font-extrabold mb-2">
                     {subtotal >= FREE_SHIPPING_THRESHOLD ? (
-                      <span className="font-medium text-brand-text flex items-center gap-1.5">
-                        <Sparkles size={13} className="text-brand-accent" />
-                        Complimentary express shipping unlocked!
+                      <span className="flex items-center gap-1.5 text-brand-green">
+                        <Sparkles size={12} />
+                        Free shipping unlocked! 🎉
                       </span>
                     ) : (
-                      <span className="text-brand-text/75">
-                        Add <strong className="text-brand-accent font-semibold">₹{remainingForFreeShipping.toLocaleString("en-IN")}</strong> more for complimentary shipping
+                      <span className="text-brand-text/70">
+                        Add{" "}
+                        <strong className="text-brand-accent">
+                          ₹{remaining.toLocaleString("en-IN")}
+                        </strong>{" "}
+                        for free shipping
                       </span>
                     )}
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-brand-text/50">
-                      {Math.round(freeShippingProgress)}%
+                    <span className="text-brand-text/45 uppercase tracking-wider">
+                      {Math.round(freeProgress)}%
                     </span>
                   </div>
-                  <div className="w-full bg-brand-text/10 h-1.5 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-brand-text/10 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${freeShippingProgress}%` }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
+                      animate={{ width: `${freeProgress}%` }}
+                      transition={{ duration: 0.55, ease: "easeOut" }}
                       className="h-full bg-brand-accent rounded-full"
                     />
                   </div>
                 </div>
               )}
 
-              {/* Items List / Empty State */}
-              <div className="flex-1 overflow-y-auto p-6">
+              {/* ── Items / Empty state ── */}
+              <div className="flex-1 overflow-y-auto px-6 py-5">
                 {items.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center py-16 px-4">
-                    <div className="w-24 h-24 rounded-full bg-brand-yellow flex items-center justify-center text-brand-text mb-6 shadow-play">
+                  <div className="h-full flex flex-col items-center justify-center text-center py-16 gap-5">
+                    <div className="w-24 h-24 rounded-full bg-brand-yellow border-[3px] border-brand-text flex items-center justify-center shadow-btn">
                       <ShoppingBag size={34} className="stroke-[2]" />
                     </div>
-                    <h3 className="font-display uppercase text-3xl mb-3 text-brand-text">Your bag is empty!</h3>
-                    <p className="font-rounded text-sm text-brand-text/60 font-semibold max-w-xs mb-8 leading-snug">
-                      Fill it with delicious, feel-good formulas your skin barrier will love.
-                    </p>
+                    <div>
+                      <h3 className="font-display uppercase text-2xl text-brand-text mb-2">
+                        Your bag is empty!
+                      </h3>
+                      <p className="font-rounded text-sm text-brand-text/55 font-medium max-w-[240px] leading-snug">
+                        Fill it with delicious, feel-good formulas your skin will love.
+                      </p>
+                    </div>
                     <Link
                       href="/shop"
                       onClick={closeCart}
-                      className="btn-play-solid bg-brand-accent px-8 py-3.5 text-[11px]"
+                      className="btn-play bg-brand-accent text-white text-[0.65rem] px-8 py-3.5"
                     >
-                      Continue Shopping
+                      Start Shopping
+                      <ArrowRight size={14} />
                     </Link>
                   </div>
                 ) : (
-                  <ul className="divide-y divide-brand-text/5" role="list">
+                  <ul className="flex flex-col divide-y-2 divide-brand-text/8" role="list">
                     {items.map((item) => (
-                      <li key={item.product.id} className="py-4 flex gap-4 first:pt-0 last:pb-0">
+                      <li
+                        key={item.product.id}
+                        className="py-4 flex gap-4 first:pt-0 last:pb-0"
+                      >
                         {/* Image */}
-                        <div className="relative aspect-square w-20 h-20 rounded bg-brand-text/5 border border-brand-text/5 overflow-hidden flex-none">
+                        <div className="relative w-20 h-20 flex-none rounded-xl overflow-hidden border-[2.5px] border-brand-text/20 bg-brand-peach/20">
                           <Image
                             src={item.product.image}
                             alt={item.product.name}
                             fill
+                            sizes="80px"
                             className="object-cover"
                           />
                         </div>
 
                         {/* Details */}
-                        <div className="flex-1 flex flex-col justify-between text-left">
-                          <div>
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <span className="text-[9px] uppercase tracking-wider text-brand-accent font-semibold block">
-                                  {item.product.category}
-                                </span>
-                                <h4 className="font-rounded text-sm font-extrabold text-brand-text leading-snug">
-                                  {item.product.name}
-                                </h4>
-                              </div>
-                              <button
-                                onClick={() => removeItem(item.product.id)}
-                                className="text-brand-text/40 hover:text-red-500 transition-colors p-1"
-                                aria-label={`Remove ${item.product.name} from cart`}
-                              >
-                                <Trash2 size={13} />
-                              </button>
+                        <div className="flex-1 flex flex-col justify-between">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <span className="text-[0.55rem] uppercase tracking-widest font-rounded font-extrabold text-brand-accent block mb-0.5">
+                                {item.product.category}
+                              </span>
+                              <h4 className="font-rounded text-sm font-extrabold text-brand-text leading-snug">
+                                {item.product.name}
+                              </h4>
                             </div>
+                            <button
+                              onClick={() => removeItem(item.product.id)}
+                              aria-label={`Remove ${item.product.name}`}
+                              className="p-1.5 rounded-full hover:bg-brand-red/10 text-brand-text/35 hover:text-brand-red transition-colors"
+                            >
+                              <Trash2 size={13} />
+                            </button>
                           </div>
 
-                          <div className="flex items-center justify-between mt-3">
-                            {/* Quantity Controls */}
-                            <div className="flex items-center border border-brand-text/15 rounded bg-brand-bg">
+                          <div className="flex items-center justify-between mt-2.5">
+                            {/* Stepper */}
+                            <div className="flex items-center border-[2.5px] border-brand-text/20 rounded-full overflow-hidden bg-white">
                               <button
-                                onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                                className="p-1 hover:bg-brand-text/5 text-brand-text/70 transition-colors"
+                                onClick={() =>
+                                  updateQuantity(item.product.id, item.quantity - 1)
+                                }
                                 aria-label="Decrease quantity"
+                                className="px-3 py-1.5 hover:bg-brand-yellow/30 transition-colors text-brand-text/70"
                               >
-                                <Minus size={11} />
+                                <Minus size={11} strokeWidth={3} />
                               </button>
-                              <span className="px-2.5 text-xs font-semibold select-none min-w-[24px] text-center">
+                              <span className="px-3 text-xs font-extrabold font-rounded select-none min-w-[2rem] text-center border-x-2 border-brand-text/15">
                                 {item.quantity}
                               </span>
                               <button
-                                onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                                className="p-1 hover:bg-brand-text/5 text-brand-text/70 transition-colors"
+                                onClick={() =>
+                                  updateQuantity(item.product.id, item.quantity + 1)
+                                }
                                 aria-label="Increase quantity"
+                                className="px-3 py-1.5 hover:bg-brand-yellow/30 transition-colors text-brand-text/70"
                               >
-                                <Plus size={11} />
+                                <Plus size={11} strokeWidth={3} />
                               </button>
                             </div>
 
-                            {/* Price */}
-                            <span className="text-xs font-semibold">
+                            {/* Line price */}
+                            <span className="font-display text-base font-black text-brand-text">
                               ₹{(item.product.price * item.quantity).toLocaleString("en-IN")}
                             </span>
                           </div>
@@ -234,53 +243,52 @@ export default function CartDrawer() {
                 )}
               </div>
 
-              {/* Drawer Footer / Checkout */}
+              {/* ── Footer / checkout ── */}
               {items.length > 0 && (
-                <div className="p-6 border-t border-brand-text/10 bg-brand-bg/80 backdrop-blur-sm space-y-4">
-                  {/* Subtotal & Free Shipping breakdown */}
-                  <div className="space-y-1.5 text-xs">
-                    <div className="flex justify-between text-brand-text/70">
+                <div className="px-6 py-5 border-t-[3px] border-brand-text bg-brand-yellow/15 space-y-4">
+                  {/* Price breakdown */}
+                  <div className="space-y-1.5 text-xs font-rounded font-semibold">
+                    <div className="flex justify-between text-brand-text/60">
                       <span>Subtotal</span>
-                      <span className="font-semibold text-brand-text">₹{subtotal.toLocaleString("en-IN")}</span>
+                      <span className="text-brand-text font-extrabold">
+                        ₹{subtotal.toLocaleString("en-IN")}
+                      </span>
                     </div>
-                    <div className="flex justify-between text-brand-text/70">
+                    <div className="flex justify-between text-brand-text/60">
                       <span>Shipping</span>
                       <span>
-                        {subtotal >= FREE_SHIPPING_THRESHOLD ? (
-                          <span className="text-brand-accent font-semibold uppercase text-[10px] tracking-wider">Free</span>
+                        {shipping === 0 ? (
+                          <span className="text-brand-green font-extrabold uppercase tracking-wide text-[0.6rem]">
+                            Free
+                          </span>
                         ) : (
-                          "₹99"
+                          `₹${shipping}`
                         )}
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm font-semibold pt-2 border-t border-brand-text/5">
-                      <span>Estimated Total</span>
-                      <span>
-                        ₹{(subtotal + (subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 99)).toLocaleString("en-IN")}
-                      </span>
+                    <div className="flex justify-between text-sm font-extrabold pt-2 border-t-2 border-brand-text/10 text-brand-text">
+                      <span>Total</span>
+                      <span>₹{(subtotal + shipping).toLocaleString("en-IN")}</span>
                     </div>
                   </div>
 
-                  {/* Checkout Button */}
+                  {/* CTA */}
                   <Link
                     href="/cart"
                     onClick={closeCart}
-                    className="btn-play-solid bg-brand-accent w-full py-3.5 px-6 text-[11px]"
+                    className="btn-play bg-brand-accent text-white w-full text-[0.65rem] py-4 justify-center"
                   >
-                    <span>Proceed to Checkout</span>
-                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                    Proceed to Checkout
+                    <ArrowRight size={15} />
                   </Link>
 
-                  <div className="flex items-center justify-center gap-4 text-[10px] text-brand-text/45 uppercase tracking-wider pt-1">
-                    <span className="flex items-center gap-1">
-                      <ShieldCheck size={12} className="text-brand-accent" />
-                      Secure Checkout
-                    </span>
-                    <span>•</span>
-                    <span>Plastic-Free Packaging</span>
+                  <div className="flex items-center justify-center gap-3 text-[0.6rem] text-brand-text/40 font-rounded font-extrabold uppercase tracking-wide">
+                    <ShieldCheck size={12} className="text-brand-accent" />
+                    Secure Checkout · Plastic-Free Packaging
                   </div>
                 </div>
               )}
+
             </motion.div>
           </div>
         </div>

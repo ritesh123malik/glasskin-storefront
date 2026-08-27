@@ -4,211 +4,274 @@ import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ShoppingBag, Heart } from "lucide-react";
 import { Product } from "@/lib/products";
 import { getProductsFromSupabase } from "@/lib/supabase";
 import { useCart } from "@/lib/cart-context";
 
+/* ── Color map: each product category gets its own candy card accent ── */
+const categoryColors: Record<string, { bg: string; btn: string; tag: string }> = {
+  cleanser:     { bg: "bg-brand-sky/20",    btn: "bg-brand-sky",    tag: "bg-brand-sky"    },
+  serum:        { bg: "bg-brand-mint/20",   btn: "bg-brand-mint",   tag: "bg-brand-mint"   },
+  moisturizer:  { bg: "bg-brand-pink/30",   btn: "bg-brand-pink",   tag: "bg-brand-pink"   },
+  spf:          { bg: "bg-brand-yellow/30", btn: "bg-brand-yellow", tag: "bg-brand-yellow" },
+  "gift-set":   { bg: "bg-brand-lilac/30",  btn: "bg-brand-lilac",  tag: "bg-brand-lilac"  },
+};
+function getColors(category = "") {
+  const key = Object.keys(categoryColors).find((k) =>
+    category.toLowerCase().includes(k)
+  );
+  return categoryColors[key ?? ""] ?? { bg: "bg-brand-peach/30", btn: "bg-brand-peach", tag: "bg-brand-peach" };
+}
+
 export default function ProductCarousel() {
   const { addItem } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
+  const [wishlistedIds, setWishlistedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     getProductsFromSupabase().then((data) => setProducts(data));
   }, []);
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     containScroll: "trimSnaps",
     slidesToScroll: 1,
     loop: false,
+    dragFree: true,
   });
 
-  const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
-  const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [prevDisabled, setPrevDisabled] = useState(true);
+  const [nextDisabled, setNextDisabled] = useState(true);
+  const [selectedIdx, setSelectedIdx] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
-  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-    setPrevBtnDisabled(!emblaApi.canScrollPrev());
-    setNextBtnDisabled(!emblaApi.canScrollNext());
+    setSelectedIdx(emblaApi.selectedScrollSnap());
+    setPrevDisabled(!emblaApi.canScrollPrev());
+    setNextDisabled(!emblaApi.canScrollNext());
   }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
-
     onSelect();
     setScrollSnaps(emblaApi.scrollSnapList());
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
-    
     return () => {
       emblaApi.off("select", onSelect);
       emblaApi.off("reInit", onSelect);
     };
   }, [emblaApi, onSelect]);
 
+  const toggleWishlist = (id: string) => {
+    setWishlistedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
   return (
-    <section id="shop-carousel" className="py-24 px-6 md:px-12 bg-brand-bg border-b border-brand-text/5 select-none">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* Top Header Controls */}
-        <div className="flex items-end justify-between mb-12">
-          <div className="text-left">
-            <span className="sticker bg-brand-pink text-brand-text text-[10px] px-4 py-1 -rotate-2 mb-4 inline-flex shadow-play">
+    <section
+      id="shop-carousel"
+      className="py-20 md:py-28 bg-brand-bg border-b-[3px] border-brand-text/8 overflow-hidden"
+      aria-label="Featured products"
+    >
+      <div className="px-6 md:px-12 max-w-[1600px] mx-auto">
+
+        {/* ── Section header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 md:mb-14">
+          <div>
+            <span className="sticker bg-brand-pink text-brand-text -rotate-2 mb-4 inline-flex">
               Signature Rituals
             </span>
-            <h2 className="heading-display text-brand-text text-4xl md:text-5xl">
-              Shop your <span className="text-brand-magenta">daily</span> rotation
+            <h2 className="heading-section text-brand-text"
+                style={{ fontSize: "var(--type-h2)" }}>
+              Shop your{" "}
+              <span className="text-brand-magenta underline-squiggle">
+                daily
+              </span>{" "}
+              rotation
             </h2>
           </div>
 
-          {/* Embla Controls (Prev/Next + Counter) */}
-          <div className="flex items-center gap-6">
-            {/* Counter */}
-            <div className="text-xs uppercase tracking-widest font-medium text-brand-text/50">
-              <span className="text-brand-text font-bold">{selectedIndex + 1}</span>
-              <span className="mx-1">/</span>
-              <span>{scrollSnaps.length}</span>
-            </div>
-
-            {/* Arrows */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={scrollPrev}
-                disabled={prevBtnDisabled}
-                className={`p-2 rounded-full border border-brand-text/10 flex items-center justify-center transition-colors ${
-                  prevBtnDisabled 
-                    ? "opacity-30 cursor-not-allowed" 
-                    : "hover:border-brand-text hover:text-brand-accent text-brand-text"
-                }`}
-                aria-label="Previous slide"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <button
-                onClick={scrollNext}
-                disabled={nextBtnDisabled}
-                className={`p-2 rounded-full border border-brand-text/10 flex items-center justify-center transition-colors ${
-                  nextBtnDisabled 
-                    ? "opacity-30 cursor-not-allowed" 
-                    : "hover:border-brand-text hover:text-brand-accent text-brand-text"
-                }`}
-                aria-label="Next slide"
-              >
-                <ChevronRight size={16} />
-              </button>
+          {/* Controls */}
+          <div className="flex items-center gap-4 shrink-0">
+            <span className="text-xs font-rounded font-bold text-brand-text/40 uppercase tracking-widest">
+              <span className="text-brand-text font-extrabold">{selectedIdx + 1}</span>
+              {" / "}
+              {scrollSnaps.length || "—"}
+            </span>
+            <div className="flex gap-2">
+              {[
+                { fn: scrollPrev, disabled: prevDisabled, label: "Previous" },
+                { fn: scrollNext, disabled: nextDisabled, label: "Next"     },
+              ].map(({ fn, disabled, label }, i) => (
+                <button
+                  key={label}
+                  onClick={fn}
+                  disabled={disabled}
+                  aria-label={`${label} slide`}
+                  className={`w-10 h-10 rounded-full border-[3px] border-brand-text flex items-center justify-center transition-all duration-150 ${
+                    disabled
+                      ? "opacity-25 cursor-not-allowed"
+                      : "hover:bg-brand-yellow hover:shadow-btn"
+                  }`}
+                >
+                  {i === 0
+                    ? <ChevronLeft  size={16} strokeWidth={3} />
+                    : <ChevronRight size={16} strokeWidth={3} />}
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Embla Viewport (supports ArrowLeft and ArrowRight keyboard navigation) */}
-        <div 
-          className="embla overflow-hidden focus:outline-none focus:ring-1 focus:ring-brand-accent/50 rounded" 
+        {/* ── Embla carousel ── */}
+        <div
           ref={emblaRef}
-          tabIndex={0}
+          className="overflow-hidden"
           role="region"
-          aria-label="Product carousel"
+          aria-label="Product carousel — swipe or use arrow keys"
+          tabIndex={0}
           onKeyDown={(e) => {
-            if (e.key === "ArrowLeft") {
-              e.preventDefault();
-              scrollPrev();
-            } else if (e.key === "ArrowRight") {
-              e.preventDefault();
-              scrollNext();
-            }
+            if (e.key === "ArrowLeft")  { e.preventDefault(); scrollPrev(); }
+            if (e.key === "ArrowRight") { e.preventDefault(); scrollNext(); }
           }}
         >
-          <div className="embla__container flex gap-6">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="embla__slide flex-none w-[78vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] xl:w-[18.2vw] flex flex-col group relative"
-              >
-                {/* Images Wrapper — clicking navigates to PDP */}
-                <Link href={`/product/${product.id}`} className="block">
-                <div className="relative aspect-[4/5] rounded overflow-hidden mb-4 bg-brand-text/5 border border-brand-text/5">
-                  
-                  {/* Default Image */}
-                  <Image 
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 640px) 78vw, (max-width: 1024px) 30vw, 20vw"
-                    className={`object-cover transition-all duration-700 ease-in-out group-hover:opacity-0 ${
-                      !product.inStock ? "grayscale opacity-60" : ""
-                    }`}
-                  />
+          <div className="flex gap-4 md:gap-5">
+            {products.map((product) => {
+              const colors = getColors(product.category);
+              const wished  = wishlistedIds.has(product.id);
 
-                  {/* Hover Image */}
-                  <Image 
-                    src={product.hoverImage}
-                    alt={`${product.name} texture and lifestyle swatch`}
-                    fill
-                    sizes="(max-width: 640px) 78vw, (max-width: 1024px) 30vw, 20vw"
-                    className={`object-cover opacity-0 transition-all duration-700 ease-in-out group-hover:opacity-100 ${
-                      !product.inStock ? "grayscale opacity-0" : ""
-                    }`}
-                  />
+              return (
+                <article
+                  key={product.id}
+                  className="embla__slide flex-none w-[72vw] xs:w-[58vw] sm:w-[42vw] md:w-[30vw] lg:w-[22vw] xl:w-[19vw] 2xl:w-[16vw] flex flex-col group"
+                >
+                  {/* Product image */}
+                  <Link
+                    href={`/product/${product.id}`}
+                    className={`relative aspect-[4/5] rounded-2xl overflow-hidden border-[3px] border-brand-text mb-4 block ${colors.bg}`}
+                    aria-label={`View ${product.name}`}
+                  >
+                    {/* Default image */}
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 640px) 72vw, (max-width: 1024px) 40vw, 22vw"
+                      className={`object-cover transition-opacity duration-500 group-hover:opacity-0 ${
+                        !product.inStock ? "grayscale opacity-50" : ""
+                      }`}
+                    />
+                    {/* Hover image */}
+                    <Image
+                      src={product.hoverImage}
+                      alt={`${product.name} — texture view`}
+                      fill
+                      sizes="(max-width: 640px) 72vw, (max-width: 1024px) 40vw, 22vw"
+                      className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    />
 
-                  {/* Sold Out Overlay */}
-                  {!product.inStock && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-brand-text/5">
-                      <span className="bg-brand-text text-brand-bg text-[9px] font-bold uppercase tracking-[0.25em] py-2 px-4 rounded-sm shadow-md">
-                        Sold Out
-                      </span>
-                    </div>
-                  )}
-                </div>
-                </Link>
+                    {/* Sold out overlay */}
+                    {!product.inStock && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="sticker bg-brand-text text-brand-bg rotate-3 text-[0.6rem]">
+                          Sold Out
+                        </span>
+                      </div>
+                    )}
 
-                {/* Info */}
-                <div className="text-left flex-grow flex flex-col">
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[9px] uppercase tracking-wider text-brand-text/40 font-semibold">
-                      {product.category}
-                    </span>
-                    <span className="text-xs font-semibold">
-                      ₹{product.price.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-
-                  <Link href={`/product/${product.id}`}>
-                  <h3 className="font-rounded text-base font-extrabold tracking-wide text-brand-text group-hover:text-brand-blue transition-colors leading-snug mb-3">
-                    {product.name}
-                  </h3>
+                    {/* Wishlist button */}
+                    <button
+                      onClick={(e) => { e.preventDefault(); toggleWishlist(product.id); }}
+                      aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+                      className={`absolute top-3 right-3 w-8 h-8 rounded-full border-[2.5px] border-brand-text flex items-center justify-center transition-all duration-150 ${
+                        wished
+                          ? "bg-brand-magenta text-white"
+                          : "bg-white text-brand-text hover:bg-brand-pink"
+                      }`}
+                    >
+                      <Heart size={13} fill={wished ? "currentColor" : "none"} />
+                    </button>
                   </Link>
 
-                  {/* Quick Add Button or Sold Out state */}
-                  <button 
-                    disabled={!product.inStock}
-                    onClick={() => product.inStock && addItem(product)}
-                    className={`mt-auto w-full py-3 text-[10px] uppercase tracking-[0.15em] font-extrabold rounded-full transition-all duration-300 font-rounded ${
-                      product.inStock
-                        ? "bg-brand-accent text-white hover:bg-brand-magenta hover:-translate-y-0.5 shadow-play active:scale-[0.99]"
-                        : "bg-brand-text/5 text-brand-text/30 cursor-not-allowed"
-                    }`}
-                  >
-                    {product.inStock ? "Add to Bag" : "Temporarily Sold Out"}
-                  </button>
-                </div>
-              </div>
-            ))}
+                  {/* Product info */}
+                  <div className="flex flex-col flex-grow px-0.5">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className={`sticker ${colors.tag} text-brand-text text-[0.55rem] px-2.5 py-1`}>
+                        {product.category}
+                      </span>
+                      {product.inStock && (
+                        <span className="text-[0.55rem] font-extrabold text-brand-text/40 uppercase tracking-wider font-rounded">
+                          In Stock
+                        </span>
+                      )}
+                    </div>
+
+                    <Link href={`/product/${product.id}`}>
+                      <h3 className="font-rounded font-extrabold text-sm md:text-base text-brand-text group-hover:text-brand-blue transition-colors leading-snug mb-2">
+                        {product.name}
+                      </h3>
+                    </Link>
+
+                    <div className="flex items-center justify-between mt-auto pt-2">
+                      <span className="font-display text-lg font-black text-brand-text">
+                        ₹{product.price.toLocaleString("en-IN")}
+                      </span>
+                      <button
+                        disabled={!product.inStock}
+                        onClick={() => product.inStock && addItem(product)}
+                        aria-label={product.inStock ? `Add ${product.name} to bag` : "Out of stock"}
+                        className={`btn-play text-[0.6rem] px-4 py-2.5 gap-1.5 ${
+                          product.inStock
+                            ? `${colors.btn} text-brand-text`
+                            : "bg-brand-text/8 text-brand-text/30 cursor-not-allowed shadow-none hover:shadow-none hover:translate-y-0"
+                        }`}
+                      >
+                        <ShoppingBag size={12} />
+                        {product.inStock ? "Add" : "N/A"}
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
 
-        {/* Shop All Button Below */}
-        <div className="mt-16 flex justify-center">
+        {/* ── Dot pagination ── */}
+        {scrollSnaps.length > 1 && (
+          <div className="flex gap-2 justify-center mt-8" aria-label="Carousel pagination">
+            {scrollSnaps.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => emblaApi?.scrollTo(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === selectedIdx
+                    ? "w-6 bg-brand-accent"
+                    : "w-2 bg-brand-text/20 hover:bg-brand-text/40"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* ── Shop All CTA ── */}
+        <div className="mt-12 md:mt-16 flex justify-center">
           <Link
             href="/shop"
-            className="btn-play-solid bg-brand-blue text-[11px] md:text-xs px-10 py-4"
+            className="btn-play bg-brand-blue text-white text-xs px-10 py-4"
           >
             Shop All Formulations
-            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <ChevronRight size={16} strokeWidth={2.5} />
           </Link>
         </div>
 
